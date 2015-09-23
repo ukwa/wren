@@ -103,7 +103,7 @@ config:
   rabbitmq.routingKey: ""
   rabbitmq.contentType: "text/plain"
   rabbitmq.contentEncoding: "UTF-8"
-  rabbitmq.persistent: 2
+  rabbitmq.persistent: true
 
 components:
   - id: "stringScheme"

@@ -24,4 +24,19 @@ public class UrlTupleToMessage extends TupleToMessage {
         return "teacup";
     }
 
+    @Override
+    protected String specifyContentType(Tuple input) {
+        return "text/plain";
+    }
+
+    @Override
+    protected String specifyContentEncoding(Tuple input) {
+        return "UTF-8";
+    }
+
+    @Override
+    protected boolean specifyMessagePersistence(Tuple input) {
+        return true;
+    }
+
 }
