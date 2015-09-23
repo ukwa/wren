@@ -89,7 +89,7 @@ config:
   #rabbitmq.password
   #rabbitmq.virtualhost
   #rabbitmq.heartbeat
-  rabbitmq.ssl: false
+  #rabbitmq.ssl: false
   #
   #rabbitmq.prefetchCount
   #rabbitmq.queueName
@@ -98,6 +98,12 @@ config:
   rabbitmq.queueName: ""
   rabbitmq.requeueOnFail: true
   rabbitmq.prefetchCount: 2
+
+  rabbitmq.exchangeName: "teacup"
+  rabbitmq.routingKey: ""
+  rabbitmq.contentType: "text/plain"
+  rabbitmq.contentEncoding: "UTF-8"
+  rabbitmq.persistent: 2
 
 components:
   - id: "stringScheme"
@@ -109,11 +115,12 @@ components:
      - "teacup"
      - "urls"
 
+  - id: "urlMessage"
+    className: "uk.bl.wa.teacup.UrlTupleToMessage"
+
+
 # spout definitions
 spouts:
-  - id: "spout-rnd"
-    className: "com.digitalpebble.storm.crawler.spout.RandomURLSpout"
-    parallelism: 1
   - id: "spout"
     className: "io.latent.storm.rabbitmq.RabbitMQSpout"
     constructorArgs:
@@ -150,6 +157,15 @@ bolts:
   - id: "status"
     className: "com.digitalpebble.storm.crawler.bolt.PrinterBolt"
     parallelism: 1
+
+  - id: "loop"
+    className: "io.latent.storm.rabbitmq.RabbitMQBolt"
+    constructorArgs:
+      - ref: "urlMessage"
+      - ref: "urlQueueDeclarator"
+    parallelism: 1
+
+
 
 # stream definitions
 streams:
@@ -189,6 +205,13 @@ streams:
     to:   "index"
     grouping:
       type: LOCAL_OR_SHUFFLE
+
+  - name: "parse --> loop"
+    from: "parse"
+    to:   "loop"
+    grouping:
+      type: LOCAL_OR_SHUFFLE
+      streamId: "status"
 
   - name: "fetch --> status"
     from: "fetch"
