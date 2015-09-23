@@ -1,10 +1,9 @@
 # topology definition
+
 # name to be used when submitting
 name: "teacup"
 
 # topology configuration
-# this will be passed to the submitter as a map of config options
-#
 config:
   topology.workers: 2
   topology.message.timeout.secs: 300
@@ -80,12 +79,46 @@ config:
   - parse.title=title
   - parse.keywords=keywords
   - description=description
-  - canonical=canonical  
+  - canonical=canonical
+
+  #rabbitmq.uri
+  # or
+  #rabbitmq.host
+  #rabbitmq.port
+  #rabbitmq.username
+  #rabbitmq.password
+  #rabbitmq.virtualhost
+  #rabbitmq.heartbeat
+  rabbitmq.ssl: false
+  #
+  #rabbitmq.prefetchCount
+  #rabbitmq.queueName
+  #rabbitmq.requeueOnFail
+  #
+  rabbitmq.queueName: ""
+  rabbitmq.requeueOnFail: true
+  rabbitmq.prefetchCount: 2
+
+components:
+  - id: "stringScheme"
+    className: "com.digitalpebble.storm.crawler.util.StringTabScheme"
+
+  - id: "urlQueueDeclarator"
+    className: "uk.bl.wa.teacup.UrlQueueDeclarator"
+    constructorArgs:
+     - "teacup"
+     - "urls"
 
 # spout definitions
 spouts:
-  - id: "spout"
+  - id: "spout-rnd"
     className: "com.digitalpebble.storm.crawler.spout.RandomURLSpout"
+    parallelism: 1
+  - id: "spout"
+    className: "io.latent.storm.rabbitmq.RabbitMQSpout"
+    constructorArgs:
+      - ref: "stringScheme"
+      - ref: "urlQueueDeclarator"
     parallelism: 1
 
 # bolt definitions

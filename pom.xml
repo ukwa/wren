@@ -37,6 +37,11 @@
          <artifactId>storm-crawler-core</artifactId>
          <version>0.6</version>
       </dependency>
+      <dependency>
+         <groupId>io.latent</groupId>
+         <artifactId>storm-rabbitmq</artifactId>
+         <version>0.6.0</version>
+      </dependency>
    </dependencies>
 
    <build>
