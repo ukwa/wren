@@ -1,0 +1,68 @@
+# topology definition
+
+# name to be used when submitting
+name: "webrender"
+
+# topology configuration
+config:
+  topology.workers: 2
+  topology.message.timeout.secs: 300
+  topology.max.spout.pending: 2
+  topology.debug: false
+  topology.kryo.register: 
+  - com.digitalpebble.storm.crawler.Metadata
+
+  rabbitmq.queueName: ""
+  rabbitmq.requeueOnFail: true
+  rabbitmq.prefetchCount: 2
+
+  rabbitmq.exchangeName: "teacup"
+  rabbitmq.routingKey: ""
+  rabbitmq.contentType: "text/plain"
+  rabbitmq.contentEncoding: "UTF-8"
+  rabbitmq.persistent: true
+
+components:
+  - id: "stringScheme"
+    className: "uk.bl.wa.teacup.StringScheme"
+
+  - id: "urlQueueDeclarator"
+    className: "uk.bl.wa.teacup.UrlQueueDeclarator"
+    constructorArgs:
+     - "teacup"
+     - "to_render"
+
+  - id: "urlMessage"
+    className: "uk.bl.wa.teacup.UrlTupleToMessage"
+
+
+# spout definitions
+spouts:
+  - id: "spout"
+    className: "io.latent.storm.rabbitmq.RabbitMQSpout"
+    constructorArgs:
+      - ref: "stringScheme"
+      - ref: "urlQueueDeclarator"
+    parallelism: 1
+
+# bolt definitions
+bolts:
+  - id: "renderer"
+    className: "org.apache.storm.flux.wrappers.bolts.FluxShellBolt"
+    constructorArgs:
+      # command line
+      - ["python", "webrenderer.py"]
+      # output fields
+      - ["word"]
+    parallelism: 1
+
+
+# stream definitions
+streams:
+  - name: "spout --> renderer"
+    from: "spout"
+    to:   "renderer"
+    grouping:
+      type: LOCAL_OR_SHUFFLE
+
+
