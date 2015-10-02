@@ -48,6 +48,10 @@ spouts:
 # bolt definitions
 bolts:
   - id: "renderer"
+    className: "uk.bl.wa.teacup.PhantomJSRenderHarBolt"
+    parallelism: 1
+    
+  - id: "renderer-py"
     className: "org.apache.storm.flux.wrappers.bolts.FluxShellBolt"
     constructorArgs:
       # command line

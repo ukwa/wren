@@ -5,11 +5,18 @@ package uk.bl.wa.teacup;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import backtype.storm.task.OutputCollector;
 import backtype.storm.task.TopologyContext;
@@ -31,7 +38,9 @@ public class PhantomJSRenderHarBolt implements IRichBolt {
 
     private String phantomjsPath = "phantomjs";
 
-    private String harRenderScript = "netsniff-rasterize.js";
+    private String harRenderScript = "/Users/andy/Documents/workspace/teacup/src/main/resources/resources/netsniff-rasterize.js";
+
+    private List<String> selectors = Arrays.asList(new String[] { ":root" });
 
     private OutputCollector _collector;
 
@@ -50,23 +59,48 @@ public class PhantomJSRenderHarBolt implements IRichBolt {
     public void execute(Tuple input) {
         // Get the URL
         String url = input.getString(0);
+        //
+        LOG.info("Attempting to render " + url);
         try {
             // Set up a tmp file:
             File tmp = File.createTempFile("phantomjs", ".har");
             tmp.deleteOnExit();
             // Set up the process
-            Process p = new ProcessBuilder(phantomjsPath, harRenderScript, url, tmp.getAbsolutePath()).start();
+            List<String> cmd = new ArrayList<String>(Arrays.asList(new String[] { phantomjsPath, harRenderScript, url, tmp.getAbsolutePath() }));
+            // Add any selectors:
+            cmd.addAll(selectors);
+            ProcessBuilder pb = new ProcessBuilder(cmd);
+            LOG.info("Running: " + pb.command());
+            Process p = pb.start();
             // Await...
             p.waitFor();
+            LOG.info("Checking results...");
+            // Check for errors and exit if there were any:
+            String stderr = IOUtils.toString(p.getErrorStream());
+            if (stderr != null && stderr.length() > 0) {
+                _collector.reportError(new Exception(stderr));
+                return;
+            }
             // Read output file into string:
             String output = FileUtils.readFileToString(tmp);
             tmp.delete();
             // Emit the output:
             if (output != null && output.length() > 0) {
-                LOG.info("Emitting: " + output);
+                LOG.info("Emitting: string of length " + output.length());
                 _collector.emit(input, new Values(output));
+                // Parse to emit specific elements of the result:
+                ObjectMapper mapper = new ObjectMapper();
+                JsonNode root = mapper.readValue(output, JsonNode.class);
+                // Look for dynamic dependencies, i.e. downloaded resources:
+                for (JsonNode node : root.path("log").path("entries")) {
+                    JsonNode rurl = node.path("request").path("url");
+                    LOG.info("Got requested url: " + rurl.asText());
+                }
+
+            } else {
+                LOG.info("No output created for: " + url);
             }
-            // Ack
+            // All has gone well, so ACK:
             _collector.ack(input);
         } catch (IOException | InterruptedException e) {
             _collector.reportError(e);
