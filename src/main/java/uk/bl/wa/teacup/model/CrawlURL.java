@@ -39,6 +39,13 @@ public class CrawlURL implements Serializable {
     @JsonProperty
     public ParentUrlMetadata parentUrlMetadata = new ParentUrlMetadata();
 
+    public CrawlURL toParent() {
+        CrawlURL nurl = new CrawlURL();
+        nurl.parentUrl = this.url;
+        nurl.parentUrlMetadata.pathFromSeed = this.pathFromSeed;
+        return nurl;
+    }
+
     public String toJson() throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);

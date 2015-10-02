@@ -12,6 +12,7 @@ import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.xerces.impl.dv.util.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,15 +97,43 @@ public class PhantomJSRenderHarBolt implements IRichBolt {
                 for (JsonNode node : root.path("log").path("entries")) {
                     JsonNode rurl = node.path("request").path("url");
                     LOG.info("Got requested url: " + rurl.asText());
-                    // Mark as embeds, and note use of "pageref" to capture
-                    // 'parent' page.
-                    CrawlURL nurl = new CrawlURL();
+                    // Mark as embeds:
+                    CrawlURL nurl = url.toParent();
                     nurl.url = rurl.asText();
                     nurl.parentUrl = url.url;
                     nurl.pathFromSeed = url.pathFromSeed + "E";
+                    // TODO consider using "pageref" to capture 'parent' page.
                     _collector.emit("urls", input, new Values(nurl));
                 }
+                // Look through the pages:
+                for (JsonNode node : root.path("log").path("pages")) {
+                    // Look for known links:
+                    for (JsonNode map : node.path("map")) {
+                        JsonNode rurl = map.path("href");
+                        LOG.info("Got requested href: " + rurl.asText());
+                        // Mark as links:
+                        CrawlURL nurl = url.toParent();
+                        nurl.url = rurl.asText();
+                        nurl.parentUrl = url.url;
+                        nurl.pathFromSeed = url.pathFromSeed + "L";
+                        _collector.emit("urls", input, new Values(nurl));
+                    }
 
+                    // Extract DOM:
+                    JsonNode renderedContentB64 = node.path("renderedContent").path("text");
+                    String renderedContent = new String(Base64.decode(renderedContentB64.asText()), "UTF-8");
+                    _collector.emit("renderedContent", input, new Values(renderedContent));
+
+                    // Extract root view image:
+                    for (JsonNode img : node.path("renderedElements")) {
+                        String selector = img.path("selector").asText();
+                        if (":root".equals(selector)) {
+                            JsonNode pngB64 = img.path("content");
+                            byte[] image = Base64.decode(pngB64.asText());
+                            _collector.emit("renderedImage", input, new Values(image));
+                        }
+                    }
+                }
             } else {
                 LOG.info("No output created for: " + url);
             }
