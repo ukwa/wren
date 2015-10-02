@@ -25,6 +25,7 @@ import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
+import uk.bl.wa.teacup.model.CrawlURL;
 
 /**
  * @author Andrew Jackson <Andrew.Jackson@bl.uk>
@@ -58,7 +59,7 @@ public class PhantomJSRenderHarBolt implements IRichBolt {
     @Override
     public void execute(Tuple input) {
         // Get the URL
-        String url = input.getString(0);
+        CrawlURL url = (CrawlURL) input.getValueByField("url");
         //
         LOG.info("Attempting to render " + url);
         try {
@@ -66,7 +67,7 @@ public class PhantomJSRenderHarBolt implements IRichBolt {
             File tmp = File.createTempFile("phantomjs", ".har");
             tmp.deleteOnExit();
             // Set up the process
-            List<String> cmd = new ArrayList<String>(Arrays.asList(new String[] { phantomjsPath, harRenderScript, url, tmp.getAbsolutePath() }));
+            List<String> cmd = new ArrayList<String>(Arrays.asList(new String[] { phantomjsPath, harRenderScript, url.url, tmp.getAbsolutePath() }));
             // Add any selectors:
             cmd.addAll(selectors);
             ProcessBuilder pb = new ProcessBuilder(cmd);
@@ -95,6 +96,13 @@ public class PhantomJSRenderHarBolt implements IRichBolt {
                 for (JsonNode node : root.path("log").path("entries")) {
                     JsonNode rurl = node.path("request").path("url");
                     LOG.info("Got requested url: " + rurl.asText());
+                    // Mark as embeds, and note use of "pageref" to capture
+                    // 'parent' page.
+                    CrawlURL nurl = new CrawlURL();
+                    nurl.url = rurl.asText();
+                    nurl.parentUrl = url.url;
+                    nurl.pathFromSeed = url.pathFromSeed + "E";
+                    _collector.emit("urls", input, new Values(nurl));
                 }
 
             } else {
@@ -122,6 +130,7 @@ public class PhantomJSRenderHarBolt implements IRichBolt {
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
         declarer.declare(new Fields("word"));
+        declarer.declareStream("urls", new Fields("url"));
     }
 
     /* (non-Javadoc)

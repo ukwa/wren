@@ -1,4 +1,4 @@
-package uk.bl.wa.teacup;
+package uk.bl.wa.teacup.schemes;
 
 import java.io.UnsupportedEncodingException;
 import java.util.List;

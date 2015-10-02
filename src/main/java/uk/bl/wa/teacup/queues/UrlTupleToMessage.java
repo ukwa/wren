@@ -1,10 +1,15 @@
 /**
  * 
  */
-package uk.bl.wa.teacup;
+package uk.bl.wa.teacup.queues;
 
-import io.latent.storm.rabbitmq.TupleToMessage;
+import java.io.UnsupportedEncodingException;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import backtype.storm.tuple.Tuple;
+import io.latent.storm.rabbitmq.TupleToMessage;
+import uk.bl.wa.teacup.model.CrawlURL;
 
 /**
  * @author Andrew Jackson <Andrew.Jackson@bl.uk>
@@ -16,7 +21,12 @@ public class UrlTupleToMessage extends TupleToMessage {
 
     @Override
     protected byte[] extractBody(Tuple input) {
-        return input.getStringByField("url").getBytes();
+        CrawlURL curl = (CrawlURL) input.getValueByField("url");
+        try {
+            return curl.toJson().getBytes("UTF-8");
+        } catch (UnsupportedEncodingException | JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -26,7 +36,7 @@ public class UrlTupleToMessage extends TupleToMessage {
 
     @Override
     protected String specifyContentType(Tuple input) {
-        return "text/plain";
+        return "application/json";
     }
 
     @Override

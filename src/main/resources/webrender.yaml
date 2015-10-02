@@ -18,22 +18,28 @@ config:
 
   rabbitmq.exchangeName: "teacup"
   rabbitmq.routingKey: ""
-  rabbitmq.contentType: "text/plain"
+  rabbitmq.contentType: "application/json"
   rabbitmq.contentEncoding: "UTF-8"
   rabbitmq.persistent: true
 
 components:
-  - id: "stringScheme"
-    className: "uk.bl.wa.teacup.StringScheme"
+  - id: "messageScheme"
+    className: "uk.bl.wa.teacup.schemes.CrawlURLScheme"
 
-  - id: "urlQueueDeclarator"
-    className: "uk.bl.wa.teacup.UrlQueueDeclarator"
+  - id: "renderQueueDeclarator"
+    className: "uk.bl.wa.teacup.queues.UrlQueueDeclarator"
     constructorArgs:
-     - "teacup"
+     - "renderer"
      - "to_render"
 
+  - id: "urlQueueDeclarator"
+    className: "uk.bl.wa.teacup.queues.UrlQueueDeclarator"
+    constructorArgs:
+     - "teacup"
+     - "urls"
+
   - id: "urlMessage"
-    className: "uk.bl.wa.teacup.UrlTupleToMessage"
+    className: "uk.bl.wa.teacup.queues.UrlTupleToMessage"
 
 
 # spout definitions
@@ -41,8 +47,8 @@ spouts:
   - id: "spout"
     className: "io.latent.storm.rabbitmq.RabbitMQSpout"
     constructorArgs:
-      - ref: "stringScheme"
-      - ref: "urlQueueDeclarator"
+      - ref: "messageScheme"
+      - ref: "renderQueueDeclarator"
     parallelism: 1
 
 # bolt definitions
@@ -57,9 +63,15 @@ bolts:
       # command line
       - ["python", "webrenderer.py"]
       # output fields
-      - ["word"]
+      - ["har"]
     parallelism: 1
-
+    
+  - id: "url-sink"
+    className: "io.latent.storm.rabbitmq.RabbitMQBolt"
+    constructorArgs:
+      - ref: "urlMessage"
+      - ref: "urlQueueDeclarator"
+    parallelism: 1
 
 # stream definitions
 streams:
@@ -68,5 +80,12 @@ streams:
     to:   "renderer"
     grouping:
       type: LOCAL_OR_SHUFFLE
+
+  - name: "render --> queue"
+    from: "renderer"
+    to:   "url-sink"
+    grouping:
+      type: LOCAL_OR_SHUFFLE
+      streamId: "urls"
 
 
