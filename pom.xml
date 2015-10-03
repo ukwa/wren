@@ -12,6 +12,7 @@
 
    <properties>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+      <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
       <storm.version>0.10.0-beta1</storm.version>
    </properties>
 
@@ -87,6 +88,67 @@
                <target>1.7</target>
                <encoding>UTF-8</encoding>
             </configuration>
+         </plugin>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>2.12.1</version>
+            <configuration>
+               <excludes>
+                  <exclude>**/*IntegrationTest*</exclude>
+               </excludes>
+            </configuration>
+         </plugin>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-failsafe-plugin</artifactId>
+            <version>2.12.4</version>
+            <configuration>
+               <includes>
+                  <include>**/*IntegrationTest*</include>
+               </includes>
+            </configuration>
+            <executions>
+               <execution>
+                  <goals>
+                     <goal>integration-test</goal>
+                     <goal>verify</goal>
+                  </goals>
+               </execution>
+            </executions>
+         </plugin>
+         <plugin>
+            <groupId>org.apache.tomcat.maven</groupId>
+            <artifactId>tomcat7-maven-plugin</artifactId>
+            <version>2.2</version>
+            <configuration>
+               <path>/</path>
+               <useTestClasspath>true</useTestClasspath>
+               <warSourceDirectory>${basedir}/src/test/webapp</warSourceDirectory>
+               <ignorePackaging>true</ignorePackaging>
+            </configuration>
+            <executions>
+               <execution>
+                  <id>start-tomcat</id>
+                  <phase>pre-integration-test</phase>
+                  <goals>
+                     <goal>run</goal>
+                  </goals>
+                  <configuration>
+                     <fork>true</fork>
+                  </configuration>
+               </execution>
+               <execution>
+                  <id>stop-tomcat</id>
+                  <phase>post-integration-test</phase>
+                  <goals>
+                     <goal>shutdown</goal>
+                  </goals>
+                  <configuration>
+                     <skipErrorOnShutdown>true</skipErrorOnShutdown>
+                  </configuration>
+               </execution>
+            </executions>
          </plugin>
       </plugins>
    </build>

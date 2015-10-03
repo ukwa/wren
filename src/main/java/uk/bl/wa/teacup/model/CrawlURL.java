@@ -5,7 +5,9 @@ package uk.bl.wa.teacup.model;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -17,9 +19,11 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 /**
  * 
- * Broadly based on
- * https://github.com/internetarchive/heritrix3/blob/master/contrib/src/main/
- * java/org/archive/crawler/frontier/AMQPUrlReceiver.java#L352
+ * Broadly based on <a href=
+ * "https://github.com/internetarchive/heritrix3/blob/master/contrib/src/main/java/org/archive/crawler/frontier/AMQPUrlReceiver.java#L352>Heritrix3's
+ * AMQP model</a>
+ * 
+ * Then with extensions based on the HAR format.
  * 
  * @author Andrew Jackson <Andrew.Jackson@bl.uk>
  *
@@ -30,11 +34,17 @@ public class CrawlURL implements Serializable {
 
     public String url = "";
 
+    public String method;
+
+    public String httpVersion;
+
+    public List<String> cookies = new ArrayList<String>();
+
+    public Map<String, String> headers = new HashMap<String, String>();
+
     public String parentUrl = "";
 
     public String pathFromSeed = "S";
-
-    public Map<String, String> headers = new HashMap<String, String>();
 
     @JsonProperty
     public ParentUrlMetadata parentUrlMetadata = new ParentUrlMetadata();

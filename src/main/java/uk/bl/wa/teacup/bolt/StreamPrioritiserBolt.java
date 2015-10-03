@@ -1,7 +1,7 @@
 /**
  * 
  */
-package uk.bl.wa.teacup;
+package uk.bl.wa.teacup.bolt;
 
 import java.util.Iterator;
 import java.util.Map;

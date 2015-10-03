@@ -54,7 +54,7 @@ spouts:
 # bolt definitions
 bolts:
   - id: "renderer"
-    className: "uk.bl.wa.teacup.PhantomJSRenderHarBolt"
+    className: "uk.bl.wa.teacup.bolt.PhantomJSRenderHarBolt"
     parallelism: 1
     
   - id: "renderer-py"
