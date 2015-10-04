@@ -60,7 +60,7 @@ public class PhantomJSRenderHarBolt implements IRichBolt {
                 LOG.info("Could not render " + url.url);
             } else {
                 // Emit the HAR:
-                _collector.emit(input, new Values(har));
+                _collector.emit(input, new Values(url, har));
 
                 // Parse the HAR:
                 RendererOutput ro = new RendererOutput(url, har);
@@ -72,9 +72,9 @@ public class PhantomJSRenderHarBolt implements IRichBolt {
 
                 // Emit rendered forms:
                 if (ro.renderedContent != null)
-                    _collector.emit("renderedContent", input, new Values(ro.renderedContent));
+                    _collector.emit("renderedContent", input, new Values(url, ro.renderedContent));
                 if (ro.renderedImage != null)
-                    _collector.emit("renderedImage", input, new Values(ro.renderedImage));
+                    _collector.emit("renderedImage", input, new Values(url, ro.renderedImage));
             }
             // All has gone well, so ACK:
             _collector.ack(input);
@@ -97,10 +97,10 @@ public class PhantomJSRenderHarBolt implements IRichBolt {
      */
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
-        declarer.declare(new Fields("har"));
+        declarer.declare(new Fields("url", "har"));
         declarer.declareStream("urls", new Fields("url"));
-        declarer.declareStream("renderedContent", new Fields("content"));
-        declarer.declareStream("renderedImage", new Fields("image"));
+        declarer.declareStream("renderedContent", new Fields("url", "content"));
+        declarer.declareStream("renderedImage", new Fields("url", "image"));
     }
 
     /* (non-Javadoc)

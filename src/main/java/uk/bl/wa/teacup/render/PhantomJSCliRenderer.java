@@ -22,7 +22,7 @@ import uk.bl.wa.teacup.model.CrawlURL;
  * 
  * TODO Make location of harRenderScript more sensible/not hardcoded.
  * 
- * TODO optionally point to an archiving proxy.
+ * TODO optionally point to an archiving proxy. --proxy=192.168.1.42:8080
  * 
  * @see http://phantomjs.org/api/command-line.html
  * 

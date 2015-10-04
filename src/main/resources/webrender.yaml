@@ -73,6 +73,11 @@ bolts:
       - ref: "urlQueueDeclarator"
     parallelism: 1
 
+  - id: "har-writer"
+    className: "uk.bl.wa.teacup.bolt.HarToWARCWriterBolt"
+    parallelism: 1
+    
+
 # stream definitions
 streams:
   - name: "spout --> renderer"
@@ -87,5 +92,11 @@ streams:
     grouping:
       type: LOCAL_OR_SHUFFLE
       streamId: "urls"
+
+  - name: "render --> har-writer"
+    from: "renderer"
+    to:   "har-writer"
+    grouping:
+      type: LOCAL_OR_SHUFFLE
 
 
