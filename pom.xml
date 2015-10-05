@@ -38,6 +38,12 @@
          <groupId>org.apache.storm</groupId>
          <artifactId>flux-wrappers</artifactId>
          <version>${storm.version}</version>
+         <exclusions>
+            <exclusion>
+               <artifactId>commons-cli</artifactId>
+               <groupId>commons-cli</groupId>
+            </exclusion>
+         </exclusions>
       </dependency>
       <dependency>
          <groupId>com.digitalpebble</groupId>

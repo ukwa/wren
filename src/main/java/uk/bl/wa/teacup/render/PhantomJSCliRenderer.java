@@ -74,4 +74,28 @@ public class PhantomJSCliRenderer {
         return null;
     }
 
+    public String getPhantomjsPath() {
+        return phantomjsPath;
+    }
+
+    public void setPhantomjsPath(String phantomjsPath) {
+        this.phantomjsPath = phantomjsPath;
+    }
+
+    public String getHarRenderScript() {
+        return harRenderScript;
+    }
+
+    public void setHarRenderScript(String harRenderScript) {
+        this.harRenderScript = harRenderScript;
+    }
+
+    public List<String> getSelectors() {
+        return selectors;
+    }
+
+    public void setSelectors(List<String> selectors) {
+        this.selectors = selectors;
+    }
+
 }

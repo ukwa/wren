@@ -34,9 +34,9 @@ public class HarToWARCWriterBoltTest {
     public void setUp() throws Exception {
         warcOutputPath = System.getProperty("maven.basedir");
         if (warcOutputPath == null) {
-            this.warcOutputPath = "warcs/";
+            this.warcOutputPath = "target/";
         } else {
-            this.warcOutputPath = this.warcOutputPath + "/warcs/";
+            this.warcOutputPath = this.warcOutputPath + "/target/";
         }
     }
 
