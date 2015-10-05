@@ -56,7 +56,8 @@ public class HarToWARCWriterBoltTest {
 
         //
         TopologyContext context = mock(TopologyContext.class);
-        when(context.getThisComponentId()).thenReturn("1");
+        when(context.getThisComponentId()).thenReturn("har-writer");
+        when(context.getThisTaskId()).thenReturn(1);
         hw.prepare(null, context, mock(OutputCollector.class));
 
         CrawlURL url = new CrawlURL();

@@ -45,7 +45,9 @@ public class PhantomJSCliRenderer {
         File tmp = File.createTempFile("phantomjs", ".har");
         tmp.deleteOnExit();
         // Set up the process
-        List<String> cmd = new ArrayList<String>(Arrays.asList(new String[] { phantomjsPath, "--ignore-ssl-errors=true", harRenderScript, url.url, tmp.getAbsolutePath() }));
+        List<String> cmd = new ArrayList<String>(Arrays.asList(new String[] {
+                phantomjsPath, "--ssl-protocol=any", "--ignore-ssl-errors=true",
+                harRenderScript, url.url, tmp.getAbsolutePath() }));
         // Add any selectors:
         cmd.addAll(selectors);
         ProcessBuilder pb = new ProcessBuilder(cmd);

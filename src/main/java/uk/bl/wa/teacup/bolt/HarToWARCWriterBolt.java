@@ -66,8 +66,8 @@ public class HarToWARCWriterBolt implements IRichBolt {
         _collector = collector;
         // extend prefix using entity ID to guarentee no collisions:
         String componentId = context.getThisComponentId();
-        long threadId = Thread.currentThread().getId();
-        this.filePrefix = this.filePrefix + "-" + componentId + "-" + threadId;
+        int taskId = context.getThisTaskId();
+        this.filePrefix = this.filePrefix + "-" + componentId + "-" + taskId;
         // Set up the writer
         WarcFileNaming warcFileNaming = new WarcFileNamingDefault(filePrefix,
                 null, hostname, null);
