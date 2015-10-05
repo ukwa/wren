@@ -2,7 +2,6 @@
 <html>
 <head>
 	<title>The Archival Acid Test</title>
-	<base href="http://acid.matkelly.com/" />
 <style type="text/css">
  /* TODO: Potentially some CSS3 features that Heritrix might not provoke crawlers to fetch content by reference */
  
@@ -87,7 +86,7 @@ document.addEventListener('DOMContentLoaded',function(){
 	
 	//Test 2d init AJAX
 	var xhr = new XMLHttpRequest();
-	xhr.open('GET','http://acid.matkelly.com/pixel.png',true);
+	xhr.open('GET','pixel.png',true);
 	xhr.responseType = 'arraybuffer';
 	xhr.onload = function(e) {
 		document.getElementById('test2d').src = "data:image/png;base64,"+base64ArrayBuffer(e.currentTarget.response);
