@@ -75,6 +75,9 @@ bolts:
 
   - id: "har-writer"
     className: "uk.bl.wa.teacup.bolt.HarToWARCWriterBolt"
+    properties:
+      - name: "outputFolder"
+        value: "/Users/andy/Documents/workspace/teacup/warcs/"
     parallelism: 1
     
 

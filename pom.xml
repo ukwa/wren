@@ -108,6 +108,12 @@
                <excludes>
                   <exclude>**/*IntegrationTest*</exclude>
                </excludes>
+               <systemProperties>
+                  <property>
+                     <name>maven.basedir</name>
+                     <value>${basedir}</value>
+                  </property>
+               </systemProperties>
             </configuration>
          </plugin>
          <plugin>

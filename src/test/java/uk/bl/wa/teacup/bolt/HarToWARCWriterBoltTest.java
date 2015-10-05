@@ -8,8 +8,11 @@ import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import backtype.storm.task.OutputCollector;
+import backtype.storm.task.TopologyContext;
 import backtype.storm.tuple.Tuple;
 import uk.bl.wa.teacup.model.CrawlURL;
 
@@ -19,11 +22,22 @@ import uk.bl.wa.teacup.model.CrawlURL;
  */
 public class HarToWARCWriterBoltTest {
 
+    private static final Logger LOG = LoggerFactory
+            .getLogger(HarToWARCWriterBoltTest.class);
+
+    private String warcOutputPath;
+
     /**
      * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {
+        warcOutputPath = System.getProperty("maven.basedir");
+        if (warcOutputPath == null) {
+            this.warcOutputPath = "warcs/";
+        } else {
+            this.warcOutputPath = this.warcOutputPath + "/warcs/";
+        }
     }
 
     public Tuple createHarTuple(CrawlURL url, String har) {
@@ -35,8 +49,15 @@ public class HarToWARCWriterBoltTest {
 
     @Test
     public void testSimpleWarcWriting() {
+        //
         HarToWARCWriterBolt hw = new HarToWARCWriterBolt();
-        hw.prepare(null, null, mock(OutputCollector.class));
+        hw.setOutputFolder(warcOutputPath);
+        LOG.info("Set filePrefix: " + hw.getOutputFolder());
+
+        //
+        TopologyContext context = mock(TopologyContext.class);
+        when(context.getThisComponentId()).thenReturn("1");
+        hw.prepare(null, context, mock(OutputCollector.class));
 
         CrawlURL url = new CrawlURL();
         url.url = "http://example.org/";

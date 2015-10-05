@@ -51,6 +51,8 @@ public class HarToWARCWriterBolt implements IRichBolt {
 
     private OutputCollector _collector;
 
+    private String outputFolder = "warcs";
+
     private String filePrefix = "BL-TEACUP";
 
     private String hostname = "localhost";
@@ -60,15 +62,20 @@ public class HarToWARCWriterBolt implements IRichBolt {
     @Override
     public void prepare(Map stormConf, TopologyContext context,
             OutputCollector collector) {
+        // Remember the collector
         _collector = collector;
+        // extend prefix using entity ID to guarentee no collisions:
+        String componentId = context.getThisComponentId();
+        long threadId = Thread.currentThread().getId();
+        this.filePrefix = this.filePrefix + "-" + componentId + "-" + threadId;
+        // Set up the writer
         WarcFileNaming warcFileNaming = new WarcFileNamingDefault(filePrefix,
                 null, hostname, null);
         WarcFileWriterConfig warcFileConfig = new WarcFileWriterConfig(
-                new File("/Users/andy/Documents/workspace/teacup/warcs/"), true,
+                new File(outputFolder), true,
                 WarcFileWriterConfig.DEFAULT_MAX_FILE_SIZE, false);
         writer = WarcFileWriter.getWarcWriterInstance(warcFileNaming,
                 warcFileConfig);
-
     }
 
     @Override
@@ -101,6 +108,8 @@ public class HarToWARCWriterBolt implements IRichBolt {
             w.writeHeader(wr);
             w.writePayload(payload);
             w.closeRecord();
+            // All has gone well, so ACK:
+            _collector.ack(input);
         } catch (Exception e) {
             LOG.error("Exception when writing HAR to WARC file.", e);
             _collector.reportError(e);
@@ -176,6 +185,32 @@ public class HarToWARCWriterBolt implements IRichBolt {
     public Map<String, Object> getComponentConfiguration() {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    // -- Getters/Setter--
+
+    public String getOutputFolder() {
+        return outputFolder;
+    }
+
+    public void setOutputFolder(String outputFolder) {
+        this.outputFolder = outputFolder;
+    }
+
+    public String getFilePrefix() {
+        return filePrefix;
+    }
+
+    public void setFilePrefix(String filePrefix) {
+        this.filePrefix = filePrefix;
+    }
+
+    public String getHostname() {
+        return hostname;
+    }
+
+    public void setHostname(String hostname) {
+        this.hostname = hostname;
     }
 
 }
