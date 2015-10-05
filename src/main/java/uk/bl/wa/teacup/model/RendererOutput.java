@@ -53,6 +53,7 @@ public class RendererOutput {
             // Mark as embeds:
             CrawlURL nurl = url.toParent();
             nurl.url = rurl.asText();
+            nurl.forceFetch = true;
             nurl.parentUrl = url.url;
             nurl.pathFromSeed = url.pathFromSeed + "E";
             nurl.httpVersion = node.path("request").path("httpVersion").asText();

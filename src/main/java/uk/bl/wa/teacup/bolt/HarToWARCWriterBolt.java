@@ -3,13 +3,19 @@
  */
 package uk.bl.wa.teacup.bolt;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 import java.util.UUID;
 
+import org.jwat.common.Base32;
+import org.jwat.common.Base64;
 import org.jwat.common.ContentType;
 import org.jwat.common.Uri;
+import org.jwat.warc.WarcConstants;
 import org.jwat.warc.WarcDigest;
 import org.jwat.warc.WarcFileNaming;
 import org.jwat.warc.WarcFileNamingDefault;
@@ -38,18 +44,30 @@ public class HarToWARCWriterBolt implements IRichBolt {
 
     private static final long serialVersionUID = 6588071684574175562L;
 
-    private static final Logger LOG = LoggerFactory.getLogger(HarToWARCWriterBolt.class);
+    private static final Logger LOG = LoggerFactory
+            .getLogger(HarToWARCWriterBolt.class);
 
     private WarcFileWriter writer;
 
     private OutputCollector _collector;
 
+    private String filePrefix = "BL-TEACUP";
+
+    private String hostname = "localhost";
+
+    private boolean useBase32 = true;
+
     @Override
-    public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
+    public void prepare(Map stormConf, TopologyContext context,
+            OutputCollector collector) {
         _collector = collector;
-        WarcFileNaming warcFileNaming = new WarcFileNamingDefault(null, null, null, null);
-        WarcFileWriterConfig warcFileConfig = new WarcFileWriterConfig(new File("/Users/andy/Documents/workspace/teacup/warcs/"), true, WarcFileWriterConfig.DEFAULT_MAX_FILE_SIZE, false);
-        writer = WarcFileWriter.getWarcWriterInstance(warcFileNaming, warcFileConfig);
+        WarcFileNaming warcFileNaming = new WarcFileNamingDefault(filePrefix,
+                null, hostname, null);
+        WarcFileWriterConfig warcFileConfig = new WarcFileWriterConfig(
+                new File("/Users/andy/Documents/workspace/teacup/warcs/"), true,
+                WarcFileWriterConfig.DEFAULT_MAX_FILE_SIZE, false);
+        writer = WarcFileWriter.getWarcWriterInstance(warcFileNaming,
+                warcFileConfig);
 
     }
 
@@ -61,27 +79,82 @@ public class HarToWARCWriterBolt implements IRichBolt {
         try {
             boolean nextWriter = writer.nextWriter();
             WarcWriter w = writer.getWriter();
-            LOG.info("Writer is " + w);
+            // Add warcinfo if it's a new file:
+            if (nextWriter) {
+                String filename = writer.getFile().getName();
+                filename = filename.replaceFirst("\\.open$", "");
+                LOG.info("Started writing file " + filename);
+                this.createWarcInfoRecord(w, filename);
+            }
+            // Make the HAR record:
             WarcRecord wr = WarcRecord.createRecord(w);
-            String recordId = "urn:uuid:" + UUID.randomUUID().toString();
             WarcHeader header = wr.header;
-            header.warcRecordIdUri = Uri.create(recordId);
-            header.warcTypeStr = "metadata";
+            header.warcRecordIdUri = createRecordID();
+            header.warcTypeIdx = WarcConstants.RT_IDX_METADATA;
             header.warcTargetUriStr = url.url;
             header.contentLength = (long) har.length();
-            header.contentType = ContentType.parseContentType("application/json");
+            header.contentType = ContentType
+                    .parseContentType("application/json");
             header.warcDate = Calendar.getInstance().getTime();
-            byte[] digest = { 1 };
-            String digestEncoded = "q";
-            header.warcBlockDigest = WarcDigest.createWarcDigest("sha1", digest, "hex", digestEncoded);
+            byte[] payload = har.getBytes("UTF-8");
+            this.addDigests(payload, header);
             w.writeHeader(wr);
-            w.writePayload(har.getBytes("UTF-8"));
+            w.writePayload(payload);
             w.closeRecord();
         } catch (Exception e) {
             LOG.error("Exception when writing HAR to WARC file.", e);
             _collector.reportError(e);
         }
 
+    }
+
+    private void addDigests(byte[] payload, WarcHeader header)
+            throws NoSuchAlgorithmException {
+
+        // Digest:
+        MessageDigest md = MessageDigest.getInstance("sha1");
+        md.update(payload);
+        byte[] digest = md.digest();
+
+        // Format the digest:
+        if (useBase32) {
+            String digestEncoded = Base32.encodeArray(digest);
+            header.warcBlockDigest = WarcDigest.createWarcDigest("sha1", digest,
+                "Base32", digestEncoded);
+            header.warcPayloadDigest = header.warcBlockDigest;
+        } else {
+            String digestEncoded = Base64.encodeArray(payload);
+            header.warcBlockDigest = WarcDigest.createWarcDigest("sha1", digest,
+                    "Base64", digestEncoded);
+        }
+    }
+
+    private Uri createRecordID() {
+        return Uri.create("urn:uuid:" + UUID.randomUUID().toString());
+    }
+
+    public void createWarcInfoRecord(WarcWriter wr, String filename)
+            throws IOException, NoSuchAlgorithmException {
+        WarcRecord record = WarcRecord.createRecord(wr);
+        WarcHeader header = record.header;
+        header.warcTypeIdx = WarcConstants.RT_IDX_WARCINFO;
+        header.warcDate = Calendar.getInstance().getTime();
+        header.warcRecordIdUri = createRecordID();
+        header.warcFilename = filename;
+        header.contentType = ContentType
+                .parseContentType("application/warc-fields");
+        String description = "software: Teacup Version 1.0.0 https://github.com/ukwa\n"
+                + "description: generated via PhantomJS\n"
+                + "format: WARC file version 1.0\n";
+        byte[] descriptionBytes = description.getBytes("UTF-8");
+        record.header.addHeader("Content-Length",
+                Long.toString(descriptionBytes.length));
+        this.addDigests(descriptionBytes, header);
+        wr.writeHeader(record);
+        ByteArrayInputStream inBytes = new ByteArrayInputStream(
+                descriptionBytes);
+        wr.streamPayload(inBytes);
+        wr.closeRecord();
     }
 
     @Override

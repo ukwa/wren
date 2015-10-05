@@ -46,6 +46,10 @@ public class CrawlURL implements Serializable {
 
     public String pathFromSeed = "S";
 
+    public boolean forceFetch = false;
+
+    public boolean isSeed = false;
+
     @JsonProperty
     public ParentUrlMetadata parentUrlMetadata = new ParentUrlMetadata();
 
