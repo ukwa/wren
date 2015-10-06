@@ -35,7 +35,7 @@ public class PhantomJSCliRenderer {
 
     private String phantomjsPath = "phantomjs";
 
-    private String harRenderScript = "/Users/andy/Documents/workspace/teacup/src/main/resources/resources/netsniff-rasterize.js";
+    private String harRenderScript = "/Users/andy/Documents/workspace/wren/src/main/resources/resources/netsniff-rasterize.js";
 
     private List<String> selectors = Arrays.asList(new String[] { ":root" });
 
