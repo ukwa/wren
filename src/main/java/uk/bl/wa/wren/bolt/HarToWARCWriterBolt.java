@@ -1,7 +1,7 @@
 /**
  * 
  */
-package uk.bl.wa.teacup.bolt;
+package uk.bl.wa.wren.bolt;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -34,7 +34,7 @@ import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.IRichBolt;
 import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.tuple.Tuple;
-import uk.bl.wa.teacup.model.CrawlURL;
+import uk.bl.wa.wren.model.CrawlURL;
 
 /**
  * @author Andrew Jackson <Andrew.Jackson@bl.uk>

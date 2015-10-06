@@ -1,7 +1,7 @@
 /**
  * 
  */
-package uk.bl.wa.teacup.render;
+package uk.bl.wa.wren.render;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,7 +14,7 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.bl.wa.teacup.model.CrawlURL;
+import uk.bl.wa.wren.model.CrawlURL;
 
 /**
  * 

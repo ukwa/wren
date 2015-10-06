@@ -1,7 +1,7 @@
 /**
  * 
  */
-package uk.bl.wa.teacup.queues;
+package uk.bl.wa.wren.queues;
 
 import java.io.IOException;
 import java.util.HashMap;

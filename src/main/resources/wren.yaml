@@ -1,7 +1,7 @@
 # topology definition
 
 # name to be used when submitting
-name: "webrender"
+name: "wren"
 
 # topology configuration
 config:
@@ -16,7 +16,7 @@ config:
   rabbitmq.requeueOnFail: true
   rabbitmq.prefetchCount: 2
 
-  rabbitmq.exchangeName: "teacup"
+  rabbitmq.exchangeName: "wren"
   rabbitmq.routingKey: ""
   rabbitmq.contentType: "application/json"
   rabbitmq.contentEncoding: "UTF-8"
@@ -24,22 +24,22 @@ config:
 
 components:
   - id: "messageScheme"
-    className: "uk.bl.wa.teacup.schemes.CrawlURLScheme"
+    className: "uk.bl.wa.wren.schemes.CrawlURLScheme"
 
   - id: "renderQueueDeclarator"
-    className: "uk.bl.wa.teacup.queues.UrlQueueDeclarator"
+    className: "uk.bl.wa.wren.queues.UrlQueueDeclarator"
     constructorArgs:
      - "renderer"
      - "to_render"
 
   - id: "urlQueueDeclarator"
-    className: "uk.bl.wa.teacup.queues.UrlQueueDeclarator"
+    className: "uk.bl.wa.wren.queues.UrlQueueDeclarator"
     constructorArgs:
-     - "teacup"
+     - "wren"
      - "urls"
 
   - id: "urlMessage"
-    className: "uk.bl.wa.teacup.queues.UrlTupleToMessage"
+    className: "uk.bl.wa.wren.queues.UrlTupleToMessage"
 
 
 # spout definitions
@@ -54,7 +54,7 @@ spouts:
 # bolt definitions
 bolts:
   - id: "renderer"
-    className: "uk.bl.wa.teacup.bolt.PhantomJSRenderHarBolt"
+    className: "uk.bl.wa.wren.bolt.PhantomJSRenderHarBolt"
     parallelism: 1
     
   - id: "renderer-py"
@@ -74,7 +74,7 @@ bolts:
     parallelism: 1
 
   - id: "har-writer"
-    className: "uk.bl.wa.teacup.bolt.HarToWARCWriterBolt"
+    className: "uk.bl.wa.wren.bolt.HarToWARCWriterBolt"
     properties:
       - name: "outputFolder"
         value: "/Users/andy/Documents/workspace/teacup/warcs/"

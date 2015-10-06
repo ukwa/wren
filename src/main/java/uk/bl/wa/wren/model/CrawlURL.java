@@ -1,7 +1,7 @@
 /**
  * 
  */
-package uk.bl.wa.teacup.model;
+package uk.bl.wa.wren.model;
 
 import java.io.IOException;
 import java.io.Serializable;

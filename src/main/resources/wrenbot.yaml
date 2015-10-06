@@ -1,7 +1,7 @@
 # topology definition
 
 # name to be used when submitting
-name: "teacup"
+name: "wrenbot"
 
 # topology configuration
 config:
@@ -30,10 +30,10 @@ config:
   - key2
   - key3  
 
-  http.agent.name: "Teacup Crawler"
+  http.agent.name: "WrenBot"
   http.agent.version: "1.0"
-  http.agent.description: "a Storm-based crawler"
-  http.agent.url: "https://github.com/anjackson/teacup"
+  http.agent.description: "a scalable rendering web crawler"
+  http.agent.url: "https://github.com/anjackson/wren"
   http.agent.email: "anj@anjackson.net"
 
   http.accept.language: "en-us,en-gb,en;q=0.7,*;q=0.3"
@@ -99,7 +99,7 @@ config:
   rabbitmq.requeueOnFail: true
   rabbitmq.prefetchCount: 2
 
-  rabbitmq.exchangeName: "teacup"
+  rabbitmq.exchangeName: "wren"
   rabbitmq.routingKey: ""
   rabbitmq.contentType: "text/plain"
   rabbitmq.contentEncoding: "UTF-8"
@@ -110,13 +110,13 @@ components:
     className: "com.digitalpebble.storm.crawler.util.StringTabScheme"
 
   - id: "urlQueueDeclarator"
-    className: "uk.bl.wa.teacup.UrlQueueDeclarator"
+    className: "uk.bl.wa.wren.UrlQueueDeclarator"
     constructorArgs:
-     - "teacup"
+     - "wren"
      - "urls"
 
   - id: "urlMessage"
-    className: "uk.bl.wa.teacup.UrlTupleToMessage"
+    className: "uk.bl.wa.wren.UrlTupleToMessage"
 
 
 # spout definitions

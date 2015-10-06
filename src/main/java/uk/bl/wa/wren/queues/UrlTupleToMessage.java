@@ -1,7 +1,7 @@
 /**
  * 
  */
-package uk.bl.wa.teacup.queues;
+package uk.bl.wa.wren.queues;
 
 import java.io.UnsupportedEncodingException;
 
@@ -9,7 +9,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 import backtype.storm.tuple.Tuple;
 import io.latent.storm.rabbitmq.TupleToMessage;
-import uk.bl.wa.teacup.model.CrawlURL;
+import uk.bl.wa.wren.model.CrawlURL;
 
 /**
  * @author Andrew Jackson <Andrew.Jackson@bl.uk>

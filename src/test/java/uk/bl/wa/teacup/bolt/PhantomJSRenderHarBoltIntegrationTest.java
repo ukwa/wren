@@ -24,7 +24,8 @@ import org.slf4j.LoggerFactory;
 import backtype.storm.task.OutputCollector;
 import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
-import uk.bl.wa.teacup.model.CrawlURL;
+import uk.bl.wa.wren.bolt.PhantomJSRenderHarBolt;
+import uk.bl.wa.wren.model.CrawlURL;
 
 /**
  * @author Andrew Jackson <Andrew.Jackson@bl.uk>

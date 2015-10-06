@@ -1,7 +1,7 @@
 /**
  * 
  */
-package uk.bl.wa.teacup.bolt;
+package uk.bl.wa.wren.bolt;
 
 import java.io.IOException;
 import java.util.Map;
@@ -16,9 +16,9 @@ import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
-import uk.bl.wa.teacup.model.CrawlURL;
-import uk.bl.wa.teacup.model.RendererOutput;
-import uk.bl.wa.teacup.render.PhantomJSCliRenderer;
+import uk.bl.wa.wren.model.CrawlURL;
+import uk.bl.wa.wren.model.RendererOutput;
+import uk.bl.wa.wren.render.PhantomJSCliRenderer;
 
 /**
  * @author Andrew Jackson <Andrew.Jackson@bl.uk>

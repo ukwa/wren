@@ -1,26 +1,25 @@
-package uk.bl.wa.teacup.schemes;
+package uk.bl.wa.wren.schemes;
 
-import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import backtype.storm.spout.Scheme;
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Values;
-import uk.bl.wa.teacup.model.CrawlURL;
 
-public class CrawlURLScheme implements Scheme {
+public class StringScheme implements Scheme {
 
     private static final long serialVersionUID = 827397701726849709L;
 
     public List<Object> deserialize(byte[] bytes) {
         try {
-            return new Values(CrawlURL.fromJson(new String(bytes, "UTF-8")));
-        } catch (IOException e) {
+            return new Values(new String(bytes, "UTF-8"));
+        } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
     }
 
     public Fields getOutputFields() {
-        return new Fields("url");
+        return new Fields("str");
     }
 }
