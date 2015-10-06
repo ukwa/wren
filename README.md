@@ -1,6 +1,6 @@
 # Wren
 
-An experiment in building large-scale web-rendering crawl tools on [Storm](http://storm.apache.org/), extending [storm-crawler](https://github.com/DigitalPebble/storm-crawler).
+An experiment in building large-scale web-rendering crawl tools. Based on [Storm](http://storm.apache.org/), and [storm-crawler](https://github.com/DigitalPebble/storm-crawler).
 
 ## Elastic Web Rendering
 
@@ -10,7 +10,7 @@ Compared to the original implementation, the goals are:
 
 - Fewer moving parts (less to maintain)
 - Based on a scalable parallel processing framework (manually scaling is hard)
-- Robust, guarenteed processing (won't drop URLs by accident)
+- Robust, guaranteed processing of requests (won't drop URLs by accident)
 
 It is also an experiment in building a more modular web crawling system.
 
