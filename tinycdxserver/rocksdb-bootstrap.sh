@@ -7,7 +7,7 @@ cd rocksdb-rocksdb-3.13.1/
 make static_lib
 export JAVA_HOME=/usr/lib/jvm/java-7-oracle
 make rocksdbjava
-make jtest
+make jtest || exit
 make install
 cd ..
 

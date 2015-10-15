@@ -18,13 +18,10 @@ RUN \
 RUN apt-get install -y libgflags-dev libsnappy-dev zlib1g-dev libbz2-dev git curl tar build-essential maven
 
 COPY ./rocksdb-bootstrap.sh /
-
-COPY ./tinycdxserver-bootstrap.sh /
-
 RUN /rocksdb-bootstrap.sh
 
+COPY ./tinycdxserver-bootstrap.sh /
 RUN /tinycdxserver-bootstrap.sh
 
-
-
-
+EXPOSE 8080
+CMD /usr/lib/jvm/java-8-oracle/bin/java -jar tinycdxserver/tinycdxserver.jar -d /data -p 8080
