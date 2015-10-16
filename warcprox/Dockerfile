@@ -6,5 +6,9 @@ RUN apt-get update && \
 
 RUN pip3.4 install warcprox 
 
-CMD warcprox -d /output/warcs --base32 -z -P 8800 --rollover-idle-time 3600 2>&1 | tee /output/log
+EXPOSE 8000
+#EXPOSE 8800
+
+#CMD warcprox -b 0.0.0.0 -d /output/warcs --base32 -z -P 8800 --rollover-idle-time 3600 2>&1 | tee /output/log
+CMD warcprox -b 0.0.0.0 -d /output/warcs --base32 -z --rollover-idle-time 3600 2>&1 | tee /output/log
 
