@@ -1,19 +1,28 @@
+# The WARChiving proxy itself
+#
 warcprox:
   build: warcprox
   volumes:
     - ./output/warcs:/output/warcs
 
-#squid-prox:
-#  build: ./squid-prox
-#  ports:
-#    - "3128:3128"
-#  links:
-#    - warcprox
+# Squic load balancer
+# 
+# Current implementation requires manual updates to squid.conf depending on the number of warcprox instances.
+squid-prox:
+  build: ./squid-prox
+  ports:
+    - "3128:3128"
+  links:
+    - warcprox
 
+# HAProxy load balancer
+#
+# An auto-scaling frontend for multiple warcprox instances working together.
+# Seem to need the httpclose option to stop the proxy from dropping 'keep alive' connections
 ha-prox:
   image: tutum/haproxy
   ports:
-    - "80:80"
+    - "3127:80"
   environment:
     - BALANCE=hdr(host)
     - OPTION=redispatch,httpclose
