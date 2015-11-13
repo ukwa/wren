@@ -1,8 +1,37 @@
-Wauldock
-========
+Wren
+====
 
-An experiment aimed at building scaleable, modular web archive components based on Docker containers.
+An experiment aimed at building a scaleable, modular web archive system based on [Docker Compose](https://docs.docker.com/compose/) and [Apache Storm](http://storm.apache.org/).
 
+Freely lifting useful ideas from:
+
+* [storm-crawler](https://github.com/DigitalPebble/storm-crawler).
+* [Brozzler](https://github.com/nlevitt/brozzler), an IA's distributed browser-based web crawler build on Docker which works along similar lines.
+* [Browsertrix](https://github.com/ikreymer/browsertrix), which is currently more of a render assistant than a crawler, but leverages Docker Compose.
+* Various Dockerised OpenWayback images, [LOCKSS](https://hub.docker.com/r/lockss/openwayback/), [UNB Libraries](https://github.com/unb-libraries/docker-openwayback), [Sawood Alam](https://github.com/ibnesayeed/docker-wayback).
+
+
+Elastic Web Rendering
+---------------------
+
+Wren is a prototype replacement for our suite of Python-based scripts that render URLs that are part of a Heritrix crawl in order to determine the URLs of dynamically transcluded dependencies.
+
+Compared to the original implementation, the goals are:
+
+- Fewer moving parts (less to maintain)
+- Based on a scalable parallel processing framework (manually scaling is hard)
+- Robust, guaranteed processing of requests (won't drop URLs by accident)
+
+It is also an experiment in building a more modular web crawling system.
+
+Robust Crawl Launching
+----------------------
+
+We also need to reliably launch our regular crawls. The current system relies on a script ([w3start.py](https://github.com/ukwa/python-w3act/blob/master/w3start.py)) that is launched by and hourly cron job. However, if something goes wrong during the launch process, the system cannot retry. A better option is to use the cron job only to place the crawl request on a queue, and use a daemon process to watch that queue and launch the script.
+
+One option is to create a normal server daemon process. We've tended to do this in the past, but this has led to various important services being spread over a number of machines. This makes the dependencies difficult to manage and the processing difficult to monitor.
+
+Using Storm would allow us to centralise these daemons and integrate them into our overall monitoring approach. They would also retry robustly and be less dependent on specific hardware systems.
 
 Scale-out Archiving Web Proxy
 -----------------------------
@@ -44,13 +73,6 @@ CDX/Remote Resource Index Servers
 - The [tinycdxserver](https://github.com/nla/tinycdxserver) Dockerfile sets up NLA's read/writable Remote Resource Index server (based on RocksDB) for experimentation.
 - The read-only CDX servers ([pywb](https://github.com/ikreymer/pywb/wiki/CDX-Server-API),[OpenWayback](https://github.com/iipc/openwayback/tree/master/wayback-cdx-server-webapp)), could be unified and extended in this direction.
 - Note that [warcbase](http://warcbase.org/) and [OpenWayback](https://github.com/iipc/openwayback) can be [used together](https://github.com/lintool/warcbase#waybackwarcbase-integration) for very large indexes that are best stored in HBase.
-
-
-See also
---------
-
-* [Brozzler](https://github.com/nlevitt/brozzler), an experimental distributed browser-based web crawler build on Docker which works along similar lines.
-*  Various Dockerised OpenWayback images, [LOCKSS](https://hub.docker.com/r/lockss/openwayback/), [UNB Libraries](https://github.com/unb-libraries/docker-openwayback), [Sawood Alam](https://github.com/ibnesayeed/docker-wayback).
 
 
 
