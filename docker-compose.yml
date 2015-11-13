@@ -1,0 +1,21 @@
+warcprox:
+  build: warcprox
+  volumes:
+    - ./output/warcs:/output/warcs
+
+#squid-prox:
+#  build: ./squid-prox
+#  ports:
+#    - "3128:3128"
+#  links:
+#    - warcprox
+
+ha-prox:
+  image: tutum/haproxy
+  ports:
+    - "80:80"
+  environment:
+    - BALANCE=hdr(host)
+    - OPTION=redispatch,httpclose
+  links:
+    - warcprox
