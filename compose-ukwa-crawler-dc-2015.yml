@@ -1,0 +1,73 @@
+# UKWA Heritrix
+ukwa-heritrix:
+  build: ./ukwa-heritrix
+  volumes:
+    - ./ukwa-heritrix/jobs:/jobs
+    - ./data/output:/output
+    - ./data/scratch:/scratch
+    - ./data/state:/state
+  ports:
+    - "8443:8443"
+  links:
+    - clamd
+    - rabbitmq
+
+# Clamd virus scanning Service
+clamd:
+  build: ./clamd
+  ports:
+    - "3310:3310"
+
+# RabbitMQ
+rabbitmq:
+  image: rabbitmq:3.5-management
+  ports:
+    - "15672:15672"  # management port (guest:guest)
+    - "5672:5672"   # amqp port
+    - "25672:25672" # cluster port
+  log_driver: none
+
+# PhantomJS web page rendering service
+ukwa-webrender:
+  build: ./webrender-phantomjs-1
+  ports:
+    - "8000:8000"
+
+# HAR Daemon
+ukwa-harchiverd:
+  build: ./webrender-har-daemon
+  volumes:
+    - ./data/output/images:/images
+  links:
+    - rabbitmq
+    - ukwa-webrender
+
+# OpenWayback, based loosely on UNB Libraries Dockerfile
+openwayback:
+  build: ./openwayback
+  volumes:
+    - ./data/output/cdx/:/data/
+  ports:
+    - "8080:8080"
+  environment:
+    - WAYBACK_BASEDIR=/data
+    - WAYBACK_URL_HOST=192.168.99.100
+
+# docker run --rm \
+#    --name openwayback \
+#    -p 8080:8080 \
+#    -e WAYBACK_HOST=wayback.yourdomain.com \
+#    -v /local/data/CDX:/data/CDX \
+#    -v /local/data/WARC:/data/WARC \
+#    unblibraries/openwayback
+
+# A test server to crawl - a clone the Archival Acid Test site by Mat Kelly:
+#acid-clone.matkelly.com:
+#  build: ../docker-archival-acid-test
+#  ports:
+#    - "5000:80"
+#  hostname: acid-clone
+#  domainname: matkelly.com
+
+# a tester process to talk to Heritrix, probably via python-heritrix
+# ...

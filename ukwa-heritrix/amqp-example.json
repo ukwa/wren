@@ -1,0 +1,12 @@
+ {
+    "headers": {
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/37.0.2062.120 Chrome/37.0.2062.120 Safari/537.36",
+    },
+    "method": "GET",
+    "parentUrl": "http://localhost/~andy/",
+    "parentUrlMetadata": {
+    	"pathFromSeed": "L",
+    	"heritableData": {}
+    },
+    "url": "http://localhost/~andy/bigfiles/anjackson7.20140210_104300.tar.gz"
+}

@@ -1,0 +1,13 @@
+{
+    "headers": {
+    },
+    "method": "GET",
+    "parentUrl": "http://www.theguardian.co.uk/",
+    "parentUrlMetadata": {
+        "pathFromSeed": "L",
+        "heritableData": {}
+    },
+    "url": "http://www.theguardian.co.uk/uk",
+    "isSeed": true
+}
+
