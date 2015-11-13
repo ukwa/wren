@@ -11,11 +11,12 @@ Scale-out Archiving Web Proxy
 - The [Squid](http://www.squid-cache.org/) caching forward proxy is used to set up a [Cache Hierarchy](http://wiki.squid-cache.org/Features/CacheHierarchy), but instead of caching the results, the 'parent' proxies can be instances of warcprox.
 - This should allow proxy-based web archiving to be used on large scale crawls.
 - Note that it may be possible to use the caching feature of Squid to avoid hitting the original site too often when extracting transcluded URLs.
+- HAProxy in HTTP mode can redirect based on hdr(host), uri, etc. (but not in TCP mode).
 
 ### TO DO ###
 
-- Add a [docker-compose](https://docs.docker.com/compose/) file that spins up multiple warcprox engines behind SQUID and test it.
 - Use a shared [data volume container](https://docs.docker.com/userguide/dockervolumes/#creating-and-mounting-a-data-volume-container) to hold the WARCs.
+- Document how to use docker-compose scale warcprox=X to scale up, using either frontend/load-balancer.
 
 
 CDX/Remote Resource Index Servers
