@@ -40,7 +40,7 @@ Scale-out Archiving Web Proxy
 - The [Squid](http://www.squid-cache.org/) caching forward proxy is used to set up a [Cache Hierarchy](http://wiki.squid-cache.org/Features/CacheHierarchy), but instead of caching the results, the 'parent' proxies can be instances of warcprox.
 - This should allow proxy-based web archiving to be used on large scale crawls.
 - Note that it may be possible to use the caching feature of Squid to avoid hitting the original site too often when extracting transcluded URLs.
-- HAProxy in HTTP mode can redirect based on ```hdr(host)```, ```uri```, etc. (but not in TCP mode).
+- [HAProxy](https://github.com/tutumcloud/haproxy) in HTTP mode can redirect based on ```hdr(host)```, ```uri```, etc. (but not in TCP mode).
 
 ### Scaling out with Docker ###
 
@@ -62,6 +62,8 @@ The system will start up and configure a HAProxy instance that is configured to 
 ### TO DO ###
 
 - Use a shared [data volume container](https://docs.docker.com/userguide/dockervolumes/#creating-and-mounting-a-data-volume-container) to hold the WARCs.
+- The [Brozzler branch of warcprox](https://github.com/nlevitt/warcprox/tree/brozzler) has some useful features for the future.
+- Use the download-started datetime for the WARC and add this as the ```[Memento-Datetime](https://github.com/mementoweb/timegate/wiki/HTTP-Response-Headers)``` to the response. Use that to indicate that the archiving should have worked, and then pass it along to another queue for checking later on. *ALTERNATIVELY* (in case of collisions etc.) use a time-based UUID or similar to be a ```WARC-Record-ID``` and add this in a separate ```Warcprox-WARC-Record-ID:``` header. That record ID can then be tracked, although this will require a new index rather than leveraging the CDX.
 
 
 CDX/Remote Resource Index Servers
@@ -70,7 +72,7 @@ CDX/Remote Resource Index Servers
 - Various web archiving components may benefit from having the [CDX index](https://archive.org/web/researcher/cdx_file_format.php) as an independent, scaleable service rather than the usual files.
 - If the CDX server also present an API for updating its index, as well as reading it, it can act as a core, standalone component in a modular architecture.
 - Potential uses include: playback, de-duplication, 'last seen' state during crawls.
-- The [tinycdxserver](https://github.com/nla/tinycdxserver) Dockerfile sets up NLA's read/writable Remote Resource Index server (based on RocksDB) for experimentation.
+- The [tinycdxserver](https://github.com/nla/tinycdxserver) Dockerfile sets up NLA's read/writable Remote Resource Index server (based on RocksDB) for experimentation. See <https://gist.github.com/ato/b2ad8e65b35afe690921> for information on using it.
 - The read-only CDX servers ([pywb](https://github.com/ikreymer/pywb/wiki/CDX-Server-API),[OpenWayback](https://github.com/iipc/openwayback/tree/master/wayback-cdx-server-webapp)), could be unified and extended in this direction.
 - Note that [warcbase](http://warcbase.org/) and [OpenWayback](https://github.com/iipc/openwayback) can be [used together](https://github.com/lintool/warcbase#waybackwarcbase-integration) for very large indexes that are best stored in HBase.
 
