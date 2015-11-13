@@ -1,12 +1,6 @@
 # teacup (storm in a)
 
-An experiment in building a large-scale crawler on [Storm](http://storm.apache.org/), extending [storm-crawler](https://github.com/DigitalPebble/storm-crawler).
-
-Other names:
-
-* [Brixham](https://en.wikipedia.org/wiki/Brixham_trawler))
-* Tempest
-
+An experiment in building a large-scale crawler on [Storm](http://storm.apache.org/), extending [storm-crawler](https://github.com/DigitalPebble/storm-crawler). Also learning from [brozzler](https://github.com/nlevitt/brozzler/), but built making it easier to flex and tune components.
 
 Current version uses [Storm Flux](https://github.com/apache/storm/tree/master/external/flux) to describe the job topology, and hooks in RabbitMQ via [storm-rabbitmq](https://github.com/ppat/storm-rabbitmq) to act as the queueing part of the crawl frontier.
 
@@ -15,6 +9,7 @@ Notes:
 * No filter for 'seen' URLs at present, so it will keep re-queuing and then re-crawling URLs.
    * [PatriciaTrie](https://commons.apache.org/proper/commons-collections/apidocs/org/apache/commons/collections4/trie/PatriciaTrie.html) seems like a good option.
    * Or reuse the 'forgetting' cache as used [here](https://github.com/DigitalPebble/storm-crawler/blob/22fa21509c97c6cc3e52ae238ad610ebe90b8477/core/src/main/java/com/digitalpebble/storm/crawler/bolt/SimpleFetcherBolt.java#L95).
+   * Or possible this [opposite of a Bloom filter](https://github.com/jmhodges/opposite_of_a_bloom_filter/blob/4bbd822de964e8c170ea947ebbc862a7acf36514/java/src/main/java/com/somethingsimilar/opposite_of_a_bloom_filter/ByteArrayFilter.java)
 * Needs an elegant implementation of the crawl-delay:
     * Current storm-crawler implements  [queues of waiting Fetch Items](https://github.com/DigitalPebble/storm-crawler/blob/20890f11a6ca02ce37c1d56134637191716428d3/core/src/main/java/com/digitalpebble/storm/crawler/bolt/FetcherBolt.java#L238), or a simpler [throttle mechanism here](https://github.com/DigitalPebble/storm-crawler/blob/20890f11a6ca02ce37c1d56134637191716428d3/core/src/main/java/com/digitalpebble/storm/crawler/bolt/FetcherBolt.java#L238).
     * H3 mixes this in the Frontier classes by using queue 'snoozing' to implement the delays.

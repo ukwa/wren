@@ -14,3 +14,10 @@ Compared to the original implementation, the goals are:
 
 It is also an experiment in building a more modular web crawling system.
 
+## Robust Crawl Launching
+
+We also need to reliably launch our regular crawls. The current system relies on a script ([w3start.py](https://github.com/ukwa/python-w3act/blob/master/w3start.py)) that is launched by and hourly cron job. However, if something goes wrong during the launch process, the system cannot retry. A better option is to use the cron job only to place the crawl request on a queue, and use a daemon process to watch that queue and launch the script.
+
+One option is to create a normal server daemon process. We've tended to do this in the past, but this has led to various important services being spread over a number of machines. This makes the dependencies difficult to manage and the processing difficult to monitor.
+
+Using Storm would allow us to centralise these daemons and integrate them into our overall monitoring approach. They would also retry robustly and be less dependent on specific hardware systems.
