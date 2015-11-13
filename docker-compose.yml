@@ -1,0 +1,11 @@
+warcprox:
+  build: warcprox
+  volumes:
+    - ./output/warcs:/output/warcs
+
+squid-prox:
+   build: ./squid-prox
+   ports:
+     - "3128:3128"
+   links:
+     - warcprox
