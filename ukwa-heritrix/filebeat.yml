@@ -7,7 +7,8 @@ filebeat:
         - /data/output/logs/crawl.log
       type: log
       document_type: heritrix
-      crawl_id: daily
+      fields:
+        crawlid: test
 
 shipper:
   name: heritrix
