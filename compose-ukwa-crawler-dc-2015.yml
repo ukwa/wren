@@ -1,16 +1,23 @@
+# Data Volume Container
+# - This is the recommended way to share a data volume between containers.
+dvc:
+  image: busybox
+  volumes:
+    - ./data:/data
+
 # UKWA Heritrix
 ukwa-heritrix:
   build: ./ukwa-heritrix
   volumes:
     - ./ukwa-heritrix/jobs:/jobs
-    - ./data/output:/output
-    - ./data/scratch:/scratch
-    - ./data/state:/state
   ports:
     - "8443:8443"
   links:
     - clamd
     - rabbitmq
+    - monitrix
+  volumes_from:
+    - dvc:rw
 
 # Clamd virus scanning Service
 clamd:
@@ -36,22 +43,31 @@ ukwa-webrender:
 # HAR Daemon
 ukwa-harchiverd:
   build: ./webrender-har-daemon
-  volumes:
-    - ./data/output/images:/images
   links:
     - rabbitmq
     - ukwa-webrender
+  volumes_from:
+    - dvc:rw
+
+# Monitrix
+monitrix:
+  build: monitrix
+  ports:
+    - "5601:5601"
+    - "9200:9200"
+    - "5000:5000"
+    - "5044:5044"
 
 # OpenWayback, based loosely on UNB Libraries Dockerfile
 openwayback:
   build: ./openwayback
-  volumes:
-    - ./data/output/cdx/:/data/
   ports:
     - "8080:8080"
   environment:
     - WAYBACK_BASEDIR=/data
     - WAYBACK_URL_HOST=192.168.99.100
+  volumes_from:
+    - dvc:ro
 
 # docker run --rm \
 #    --name openwayback \
@@ -62,6 +78,7 @@ openwayback:
 #    unblibraries/openwayback
 
 # A test server to crawl - a clone the Archival Acid Test site by Mat Kelly:
+# n.b. now in the acid-crawl repo rather than here.
 #acid-clone.matkelly.com:
 #  build: ../docker-archival-acid-test
 #  ports:

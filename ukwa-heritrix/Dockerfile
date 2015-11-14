@@ -32,6 +32,12 @@ RUN \
   cp /heritrix3/contrib/target/heritrix-contrib-*.jar ./heritrix-3.3.0-SNAPSHOT/lib && \
   cp /bl-heritrix-modules/target/bl-heritrix-modules-*jar-with-dependencies.jar ./heritrix-3.3.0-SNAPSHOT/lib
 
+RUN \
+  curl -L -O https://download.elastic.co/beats/filebeat/filebeat_1.0.0-rc1_amd64.deb && \
+  dpkg -i filebeat_1.0.0-rc1_amd64.deb
+
+ADD filebeat.yml /etc/filebeat/filebeat.yml
+
 EXPOSE 8443
 
 ENV FOREGROUND true
@@ -42,5 +48,5 @@ VOLUME /jobs
 
 VOLUME /output
 
-CMD ./heritrix-3.3.0-SNAPSHOT/bin/heritrix -a heritrix:heritrix -b 0.0.0.0 -j /jobs
+CMD filebeat -e -c /etc/filebeat/filebeat.yml & ./heritrix-3.3.0-SNAPSHOT/bin/heritrix -a heritrix:heritrix -b 0.0.0.0 -j /jobs
 
