@@ -4,11 +4,10 @@ filebeat:
     -
       paths:
         - /output/logs/crawl.log
-        - /data/output/logs/crawl.log
       type: log
       document_type: heritrix
       fields:
-        crawlid: test
+        crawl_id: test
 
 shipper:
   name: heritrix
