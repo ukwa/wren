@@ -3,6 +3,14 @@ Wren
 
 An experiment aimed at building a scaleable, modular web archive system based on [Docker Compose](https://docs.docker.com/compose/) and [Apache Storm](http://storm.apache.org/).
 
+To make any progress, we need to be able to effectively compare any new crawler with our current system. Therefore, we start by reproducing our existing crawl system via Docker Compose, and check we fully understand it before attempting to make any modifications. We will then look at ways of modifying, replacing or removing our current components in order to make the whole system more maintainable, manageable and scalable.
+
+Our goals are:
+
+- Fewer moving parts (less to maintain)
+- Based on a scalable parallel processing framework (manually scaling is hard)
+- Robust, guaranteed processing of requests (won't drop URLs by accident)
+
 Freely lifting useful ideas from:
 
 * [storm-crawler](https://github.com/DigitalPebble/storm-crawler).
@@ -10,60 +18,31 @@ Freely lifting useful ideas from:
 * [Browsertrix](https://github.com/ikreymer/browsertrix), which is currently more of a render assistant than a crawler, but leverages Docker Compose.
 * Various Dockerised OpenWayback images, [LOCKSS](https://hub.docker.com/r/lockss/openwayback/), [UNB Libraries](https://github.com/unb-libraries/docker-openwayback), [Sawood Alam](https://github.com/ibnesayeed/docker-wayback).
 
+### Folder structure ###
 
-Elastic Web Rendering
+Most of the folders in this repository are distinct Dockerized services. The folders beginning with ```compose-``` contain ```docker-compose.yml``` files that assemble these individual services into larger, integrated systems.
+
+* Compositions
+    * [UKWA Heritrix3 Test Crawl System](./compose-test-crawler/)
+    * [Scale-out Archiving Proxy](./compose-warcprox/)
+
+
+Wren Storm Topologies
 ---------------------
 
-Wren is a prototype replacement for our suite of Python-based scripts that render URLs that are part of a Heritrix crawl in order to determine the URLs of dynamically transcluded dependencies.
+We are evaluating whether Apache Storm provides a useful framework for modularizing and scaling the core crawl process itself. In particular, the way the framework provides guaranteed message processing (e.g. at-least-once semantics) should help ensure the integrity of the system.
 
-Compared to the original implementation, the goals are:
+### Elastic Web Rendering ###
 
-- Fewer moving parts (less to maintain)
-- Based on a scalable parallel processing framework (manually scaling is hard)
-- Robust, guaranteed processing of requests (won't drop URLs by accident)
+Wren includes a prototype replacement for our suite of Python-based scripts that render URLs that are part of a Heritrix crawl in order to determine the URLs of dynamically transcluded dependencies.
 
-It is also an experiment in building a more modular web crawling system.
-
-Robust Crawl Launching
-----------------------
+### Robust Crawl Launching ###
 
 We also need to reliably launch our regular crawls. The current system relies on a script ([w3start.py](https://github.com/ukwa/python-w3act/blob/master/w3start.py)) that is launched by and hourly cron job. However, if something goes wrong during the launch process, the system cannot retry. A better option is to use the cron job only to place the crawl request on a queue, and use a daemon process to watch that queue and launch the script.
 
 One option is to create a normal server daemon process. We've tended to do this in the past, but this has led to various important services being spread over a number of machines. This makes the dependencies difficult to manage and the processing difficult to monitor.
 
-Using Storm would allow us to centralise these daemons and integrate them into our overall monitoring approach. They would also retry robustly and be less dependent on specific hardware systems.
-
-Scale-out Archiving Web Proxy
------------------------------
-
-- The [warcprox](https://github.com/internetarchive/warcprox) Dockerfile sets up warcprox on Ubuntu 14.04/Python 3.4 with the necessary dependencies.
-- The [Squid](http://www.squid-cache.org/) caching forward proxy is used to set up a [Cache Hierarchy](http://wiki.squid-cache.org/Features/CacheHierarchy), but instead of caching the results, the 'parent' proxies can be instances of warcprox.
-- This should allow proxy-based web archiving to be used on large scale crawls.
-- Note that it may be possible to use the caching feature of Squid to avoid hitting the original site too often when extracting transcluded URLs.
-- [HAProxy](https://github.com/tutumcloud/haproxy) in HTTP mode can redirect based on ```hdr(host)```, ```uri```, etc. (but not in TCP mode).
-
-### Scaling out with Docker ###
-
-To experiment with scaling out, first clean out any existing machines:
-
-    $ docker-compose rm
-
-Then define how many warcprox instances you want and ask for them to be configured:
-
-    $ docker-compose scale warcprox=3
-
-Then when you run 
-
-    $ docker-compose up
-
-The system will start up and configure a HAProxy instance that is configured to balance the load across all the warcprox instances. The provided configuration divides the load up using ```hdr(host)```, which send all requests relating to a particular host to the same warcprox instance. This ensures that URL-based de-duplication can work effectively. Further experimentation with the load balancing parameters is recommended.
-
-
-### TO DO ###
-
-- Use a shared [data volume container](https://docs.docker.com/userguide/dockervolumes/#creating-and-mounting-a-data-volume-container) to hold the WARCs.
-- The [Brozzler branch of warcprox](https://github.com/nlevitt/warcprox/tree/brozzler) has some useful features for the future.
-- Use the download-started datetime for the WARC and add this as the ```[Memento-Datetime](https://github.com/mementoweb/timegate/wiki/HTTP-Response-Headers)``` to the response. Use that to indicate that the archiving should have worked, and then pass it along to another queue for checking later on. *ALTERNATIVELY* (in case of collisions etc.) use a time-based UUID or similar to be a ```WARC-Record-ID``` and add this in a separate ```Warcprox-WARC-Record-ID:``` header. That record ID can then be tracked, although this will require a new index rather than leveraging the CDX.
+Using Storm would allow us to centralize these daemons and integrate them into our overall monitoring approach. They would also retry robustly and be less dependent on specific hardware systems.
 
 
 CDX/Remote Resource Index Servers
