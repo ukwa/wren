@@ -1,0 +1,3 @@
+[submodule "webrender-har-daemon"]
+	path = webrender-har-daemon
+	url = git@github.com:ukwa/python-har-daemon.git

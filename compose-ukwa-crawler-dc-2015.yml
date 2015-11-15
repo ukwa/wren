@@ -35,17 +35,19 @@ rabbitmq:
   log_driver: none
 
 # PhantomJS web page rendering service
-ukwa-webrender:
+webrender:
   build: ./webrender-phantomjs-1
   ports:
     - "8000:8000"
 
 # HAR Daemon
-ukwa-harchiverd:
+har-daemon:
   build: ./webrender-har-daemon
+  environment:
+    - "AMQP_URL=amqp://guest:guest@rabbitmq:5672/%2f"
   links:
     - rabbitmq
-    - ukwa-webrender
+    - webrender
   volumes_from:
     - dvc:rw
 
