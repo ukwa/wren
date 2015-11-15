@@ -7,9 +7,9 @@ dvc:
 
 # UKWA Heritrix
 ukwa-heritrix:
-  build: ./ukwa-heritrix
+  build: ../ukwa-heritrix
   volumes:
-    - ./ukwa-heritrix/jobs:/jobs
+    - ./jobs:/jobs
   ports:
     - "8443:8443"
   links:
@@ -21,7 +21,7 @@ ukwa-heritrix:
 
 # Clamd virus scanning Service
 clamd:
-  build: ./clamd
+  build: ../clamd
   ports:
     - "3310:3310"
 
@@ -36,13 +36,13 @@ rabbitmq:
 
 # PhantomJS web page rendering service
 webrender:
-  build: ./webrender-phantomjs-1
+  build: ../webrender-phantomjs-1
   ports:
     - "8000:8000"
 
 # HAR Daemon
 har-daemon:
-  build: ./webrender-har-daemon
+  build: ../webrender-har-daemon
   environment:
     - "AMQP_URL=amqp://guest:guest@rabbitmq:5672/%2f"
   links:
@@ -53,7 +53,7 @@ har-daemon:
 
 # Monitrix
 monitrix:
-  build: monitrix
+  build: ../monitrix
   ports:
     - "5601:5601"
     - "9200:9200"
@@ -62,7 +62,7 @@ monitrix:
 
 # OpenWayback, based loosely on UNB Libraries Dockerfile
 openwayback:
-  build: ./openwayback
+  build: ../openwayback
   ports:
     - "8080:8080"
   environment:
