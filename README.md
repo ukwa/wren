@@ -26,6 +26,14 @@ Most of the folders in this repository are distinct Dockerized services. The fol
     * [UKWA Heritrix3 Test Crawl System](./compose-test-crawler/)
     * [Scale-out Archiving Proxy](./compose-warcprox/)
 
+Where the services are under active development, the service folder is a ```git``` ```submodule```, pulling in the original repository and building it directly inside this parent project. This makes integrated development and testing much easier. However, if you clone this repository, you'll probably want to do so recursively, like this:
+
+    $ git clone --recursive git@github.com:anjackson/wren.git
+
+This will go and pull down all the ```submodules``` at the same time as the original clone.
+
+As individual services stabilize, it should be possible to remove these submodules and run the Docker images instead.
+
 
 Wren Storm Topologies
 ---------------------

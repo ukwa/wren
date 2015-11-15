@@ -4,3 +4,6 @@
 [submodule "webrender-phantomjs"]
 	path = webrender-phantomjs
 	url = git@github.com:ukwa/webrender-phantomjs.git
+[submodule "monitrix"]
+	path = monitrix
+	url = git@github.com:ukwa/monitrix.git
