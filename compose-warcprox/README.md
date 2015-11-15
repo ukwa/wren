@@ -1,10 +1,11 @@
 Scale-out Archiving Web Proxy
 -----------------------------
 
+This project should allow proxy-based web archiving to be used on large scale crawls by scaling it out behind a proxying load balancer.
+
 - The [warcprox](https://github.com/internetarchive/warcprox) Dockerfile sets up warcprox on Ubuntu 14.04/Python 3.4 with the necessary dependencies.
 - The [Squid](http://www.squid-cache.org/) caching forward proxy is used to set up a [Cache Hierarchy](http://wiki.squid-cache.org/Features/CacheHierarchy), but instead of caching the results, the 'parent' proxies can be instances of warcprox.
-- This should allow proxy-based web archiving to be used on large scale crawls.
-- Note that it may be possible to use the caching feature of Squid to avoid hitting the original site too often when extracting transcluded URLs.
+    - Note that it may be possible to use the caching feature of Squid to avoid hitting the original site too often when extracting transcluded URLs.
 - [HAProxy](https://github.com/tutumcloud/haproxy) in HTTP mode can redirect based on ```hdr(host)```, ```uri```, etc. (but not in TCP mode).
 
 ### Scaling out with Docker ###
@@ -26,7 +27,6 @@ The system will start up and configure a HAProxy instance that is configured to 
 
 ### TO DO ###
 
-- Use a shared [data volume container](https://docs.docker.com/userguide/dockervolumes/#creating-and-mounting-a-data-volume-container) to hold the WARCs.
 - The [Brozzler branch of warcprox](https://github.com/nlevitt/warcprox/tree/brozzler) has some useful features for the future.
 - Use the download-started datetime for the WARC and add this as the ```[Memento-Datetime](https://github.com/mementoweb/timegate/wiki/HTTP-Response-Headers)``` to the response. Use that to indicate that the archiving should have worked, and then pass it along to another queue for checking later on. *ALTERNATIVELY* (in case of collisions etc.) use a time-based UUID or similar to be a ```WARC-Record-ID``` and add this in a separate ```Warcprox-WARC-Record-ID:``` header. That record ID can then be tracked, although this will require a new index rather than leveraging the CDX.
 - Expose the playback interface too.

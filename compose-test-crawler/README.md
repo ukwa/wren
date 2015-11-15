@@ -10,6 +10,8 @@ This is a Dockerised version of the UKWA Heritrix3 crawl system. It runs:
 * Monitrix (based on ELK, but where Logstash understand Heritrix3's crawl.log format).
 * OpenWayback (but useless at present as nothing is generating the CDX)
 
+Uses a shared [data volume container](https://docs.docker.com/userguide/dockervolumes/#creating-and-mounting-a-data-volume-container) to hold the WARCs.
+
 
 ### TODO ###
 
