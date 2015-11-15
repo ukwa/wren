@@ -36,7 +36,7 @@ rabbitmq:
 
 # PhantomJS web page rendering service
 webrender:
-  build: ../webrender-phantomjs-1
+  build: ../webrender-phantomjs
   ports:
     - "8000:8000"
 
