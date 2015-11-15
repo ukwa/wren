@@ -1,10 +1,3 @@
-# Data Volume Container
-# - This is the recommended way to share a data volume between containers.
-dvc:
-  image: busybox
-  volumes:
-    - ./data:/data
-
 # UKWA Heritrix
 ukwa-heritrix:
   build: ../ukwa-heritrix
@@ -18,6 +11,13 @@ ukwa-heritrix:
     - monitrix
   volumes_from:
     - dvc:rw
+
+# Data Volume Container
+# - This is the recommended way to share a data volume between containers.
+dvc:
+  image: busybox
+  volumes:
+    - ./data:/data
 
 # Clamd virus scanning Service
 clamd:
@@ -40,7 +40,7 @@ webrender:
   ports:
     - "8000:8000"
 
-# HAR Daemon
+# HAR Daemon that connects Heritrix to Webrender via RabbitMQ
 har-daemon:
   build: ../webrender-har-daemon
   environment:
@@ -51,7 +51,7 @@ har-daemon:
   volumes_from:
     - dvc:rw
 
-# Monitrix
+# Monitrix, built on ELK by extending Logstash to support Heritrix logs.
 monitrix:
   build: ../monitrix
   ports:
@@ -70,23 +70,3 @@ openwayback:
     - WAYBACK_URL_HOST=192.168.99.100
   volumes_from:
     - dvc:ro
-
-# docker run --rm \
-#    --name openwayback \
-#    -p 8080:8080 \
-#    -e WAYBACK_HOST=wayback.yourdomain.com \
-#    -v /local/data/CDX:/data/CDX \
-#    -v /local/data/WARC:/data/WARC \
-#    unblibraries/openwayback
-
-# A test server to crawl - a clone the Archival Acid Test site by Mat Kelly:
-# n.b. now in the acid-crawl repo rather than here.
-#acid-clone.matkelly.com:
-#  build: ../docker-archival-acid-test
-#  ports:
-#    - "5000:80"
-#  hostname: acid-clone
-#  domainname: matkelly.com
-
-# a tester process to talk to Heritrix, probably via python-heritrix
-# ...
