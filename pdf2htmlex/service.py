@@ -27,9 +27,9 @@ def run_pdftohtmlex(url, first_page="1", last_page = None):
     out_d, out_name = os.path.split(out_f.name)
     # run process
     if last_page:
-        cmd = ['/usr/local/bin/pdf2htmlEX', '--first-page', first_page,'--last-page', last_page, '--dest-dir', "%s/" % out_d, in_f.name, out_name]
+        cmd = ['pdf2htmlEX', '--first-page', first_page,'--last-page', last_page, '--dest-dir', "%s/" % out_d, in_f.name, out_name]
     else:
-        cmd = ['/usr/local/bin/pdf2htmlEX', '--dest-dir', "%s/" % out_d, in_f.name, out_name]
+        cmd = ['pdf2htmlEX', '--dest-dir', "%s/" % out_d, in_f.name, out_name]
     logging.debug("Running: %s" % cmd )
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = p.communicate()
