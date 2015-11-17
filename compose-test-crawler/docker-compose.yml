@@ -17,7 +17,8 @@ ukwa-heritrix:
 dvc:
   image: busybox
   volumes:
-    - ./data:/data
+    - ./output:/output
+    - ./state:/state
 
 # Clamd virus scanning Service
 clamd:
@@ -60,13 +61,43 @@ monitrix:
     - "5000:5000"
     - "5044:5044"
 
+## W3ACT (build in place and run)
+#w3act:
+#  build: ../w3act
+#  volumes:
+#    - ../w3act/w3act/target/universal/stage:/w3act
+#  ports:
+#    - "9000:9000"#
+
+## For W3ACT data
+#postgres:
+#  image: postgres:9.4
+#  environment:
+#    - "POSTGRES_PASSWORD=pgpwd"#
+
+## Solr, for CDX too?
+## See https://hub.docker.com/_/solr/
+#solr:
+#  image: solr:5.3
+#  command: "bash -c '/opt/solr/bin/solr start -f -z $$ZK_PORT_2181_TCP_ADDR:$$ZK_PORT_2181_TCP_PORT'"
+#  ports:
+#    - "8983:8983"
+#  links: 
+#    - zookeeper:zk#
+
+## For scaling Solr
+#zookeeper:
+#  image: wurstmeister/zookeeper
+#  ports: 
+#    - "2181"
+
 # OpenWayback, based loosely on UNB Libraries Dockerfile
-openwayback:
-  build: ../openwayback
-  ports:
-    - "8080:8080"
-  environment:
-    - WAYBACK_BASEDIR=/data
-    - WAYBACK_URL_HOST=192.168.99.100
-  volumes_from:
-    - dvc:ro
+#openwayback:
+#  build: ../openwayback
+#  ports:
+#    - "8080:8080"
+#  environment:
+#    - WAYBACK_BASEDIR=/data
+#    - WAYBACK_URL_HOST=192.168.99.100
+#  volumes_from:
+#    - dvc:ro

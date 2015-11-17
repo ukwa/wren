@@ -11,18 +11,18 @@ RUN \
   apt-get -y upgrade && \
   apt-get install -y vim wget curl git maven
 
+ADD heritrix3 /heritrix3
+
+ADD bl-heritrix-modules /bl-heritrix-modules
+
 RUN \
-  git clone https://github.com/ukwa/heritrix3.git && \
   cd heritrix3 && \
+  mvn install -DskipTests && \
+  cd contrib && \
   mvn install -DskipTests
 
 RUN \
-  git clone https://github.com/ukwa/bl-heritrix-modules.git && \
   cd bl-heritrix-modules && \
-  mvn install -DskipTests
-
-RUN \
-  cd heritrix3/contrib && \
   mvn install -DskipTests
 
 RUN \
@@ -38,6 +38,8 @@ RUN \
 
 ADD filebeat.yml /etc/filebeat/filebeat.yml
 
+ADD start.sh /start.sh
+
 EXPOSE 8443
 
 ENV FOREGROUND true
@@ -48,5 +50,5 @@ VOLUME /jobs
 
 VOLUME /output
 
-CMD filebeat -v -e -c /etc/filebeat/filebeat.yml & ./heritrix-3.3.0-SNAPSHOT/bin/heritrix -a heritrix:heritrix -b 0.0.0.0 -j /jobs
+CMD /start.sh
 

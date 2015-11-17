@@ -1,7 +1,7 @@
 Scale-out Archiving Web Proxy
 -----------------------------
 
-This project should allow proxy-based web archiving to be used on large scale crawls by scaling it out behind a proxying load balancer.
+This project should allow proxy-based web archiving to be used on large scale crawls by scaling it out behind a proxying load balancer. The load balancer attempts to route based on the URL, so that the same URLs are always routed to the same warcprox instance, thus ensuring deduplication works as expected without having to share state between the archiving proxies.
 
 - The [warcprox](https://github.com/internetarchive/warcprox) Dockerfile sets up warcprox on Ubuntu 14.04/Python 3.4 with the necessary dependencies.
 - The [Squid](http://www.squid-cache.org/) caching forward proxy is used to set up a [Cache Hierarchy](http://wiki.squid-cache.org/Features/CacheHierarchy), but instead of caching the results, the 'parent' proxies can be instances of warcprox.

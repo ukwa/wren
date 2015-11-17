@@ -503,6 +503,17 @@ metadata.description=UK Legal Deposit Test Crawl.
     <property name="writeRevisitForNotModified" value="false"/>
     <!-- <property name="startNewFilesOnCheckpoint" value="true" /> -->
   </bean>
+  <!-- This provides a crawl log feed to a queue - note that you'll need to set up a binding that matches these parameters to a queue -->
+  <bean id="crawlLogFeed" class="org.archive.modules.postprocessor.AMQPCrawlLogFeed">
+    <property name="routingKey" value="crawl-log-feed"/>
+    <property name="exchange" value="heritrix"/>
+    <property name="amqpUri" value="amqp://guest:guest@rabbitmq:5672/%2f"/>
+    <property name="extraFields">
+        <map>
+          <entry key="jobName" value="#{metadata.jobName}"/>
+        </map>
+    </property>
+  </bean>
   <bean id="candidates" class="org.archive.crawler.postprocessor.CandidatesProcessor">
 <!-- <property name="seedsRedirectNewSeeds" value="true" /> -->
 <!-- <property name="processErrorOutlinks" value="false" /> -->
@@ -526,6 +537,8 @@ metadata.description=UK Legal Deposit Test Crawl.
 <!-- write to aggregate archival files... -->
         <ref bean="warcWriterDefault"/>
         <ref bean="persistStoreProcessor"/>
+<!-- send the crawl log to a queue for downstream checks -->
+        <ref bean="crawlLogFeed"/>
 <!-- ...send each outlink candidate URI to CandidateChain, 
          and enqueue those ACCEPTed to the frontier... -->
         <ref bean="candidates"/>
