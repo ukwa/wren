@@ -67,7 +67,7 @@ metadata.description=UK Legal Deposit Test Crawl.
 <!-- SCOPE: rules for which discovered URIs to crawl; order is very 
       important because last decision returned other than 'NONE' wins. -->
   <bean id="scope" class="org.archive.modules.deciderules.DecideRuleSequence">
-    <property name="logToFile" value="false"/>
+    <property name="logToFile" value="true"/>
     <property name="rules">
       <list>
 <!-- Begin by REJECTing all... -->
@@ -320,6 +320,8 @@ metadata.description=UK Legal Deposit Test Crawl.
   </bean>
   <bean id="extractorSwf" class="org.archive.modules.extractor.ExtractorSWF">
   </bean>
+  <bean id="extractorRobotsSitemaps" class="uk.bl.wap.modules.extractor.RobotsTxtSitemapExtractor">
+  </bean>
   <bean id="extractorJson" class="uk.bl.wap.modules.extractor.ExtractorJson">
   </bean>
   <!--bean id="extractorMq" class="uk.bl.wap.modules.extractor.AsynchronousMQExtractor">
@@ -398,6 +400,8 @@ metadata.description=UK Legal Deposit Test Crawl.
 <!--ref bean="trapSuppressExtractor" /-->
 <!-- ...extract outlinks via Asynchronous Messaging Queue... -->
         <ref bean="extractorMq"/>
+<!-- ...extract sitemap links from robots.txt... -->
+        <ref bean="extractorRobotsSitemaps"/>
 <!-- ...extract outlinks from JSON... -->
         <ref bean="extractorJson"/>
 <!-- ...extract outlinks from HTML content... -->
@@ -538,7 +542,7 @@ metadata.description=UK Legal Deposit Test Crawl.
         <ref bean="warcWriterDefault"/>
         <ref bean="persistStoreProcessor"/>
 <!-- send the crawl log to a queue for downstream checks -->
-        <ref bean="crawlLogFeed"/>
+        <!-- ref bean="crawlLogFeed"/ -->
 <!-- ...send each outlink candidate URI to CandidateChain, 
          and enqueue those ACCEPTed to the frontier... -->
         <ref bean="candidates"/>
@@ -1002,7 +1006,7 @@ metadata.description=UK Legal Deposit Test Crawl.
   </bean>
 <!-- CRAWLERLOGGERMODULE: shared logging facility -->
   <bean id="loggerModule" class="org.archive.crawler.reporting.CrawlerLoggerModule">
-    <property name="path" value="/output/logs"/>
+    <property name="path" value="/output/logs/#{metadata.jobName}"/>
 <!-- <property name="crawlLogPath" value="crawl.log" /> -->
 <!-- <property name="alertsLogPath" value="alerts.log" /> -->
 <!-- <property name="progressLogPath" value="progress-statistics.log" /> -->

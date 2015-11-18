@@ -10,9 +10,6 @@
 [submodule "acid-crawl"]
 	path = acid-crawl
 	url = git@github.com:ukwa/acid-crawl.git
-[submodule "python-w3act"]
-	path = python-w3act
-	url = git@github.com:ukwa/python-w3act.git
 [submodule "ukwa-heritrix/heritrix3"]
 	path = ukwa-heritrix/heritrix3
 	url = git@github.com:ukwa/heritrix3.git
@@ -22,3 +19,6 @@
 [submodule "w3act/w3act"]
 	path = w3act/w3act
 	url = git@github.com:ukwa/w3act.git
+[submodule "w3act-to-heritrix/python-w3act"]
+	path = w3act-to-heritrix/python-w3act
+	url = git@github.com:ukwa/python-w3act.git

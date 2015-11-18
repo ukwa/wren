@@ -63,5 +63,14 @@ CDX/Remote Resource Index Servers
 - The read-only CDX servers ([pywb](https://github.com/ikreymer/pywb/wiki/CDX-Server-API),[OpenWayback](https://github.com/iipc/openwayback/tree/master/wayback-cdx-server-webapp)), could be unified and extended in this direction.
 - Note that [warcbase](http://warcbase.org/) and [OpenWayback](https://github.com/iipc/openwayback) can be [used together](https://github.com/lintool/warcbase#waybackwarcbase-integration) for very large indexes that are best stored in HBase.
 
+Remote Browsers
+---------------
 
+* [Netcapsule](https://github.com/ikreymer/netcapsule)
+* [guacamole-docker](http://guac-dev.org/doc/gug/guacamole-docker.html)
+
+End-to-End Testing
+------------------
+
+* [Use Splinter?](https://splinter.readthedocs.org/en/latest/why.html)
 

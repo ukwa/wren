@@ -3,8 +3,12 @@ ukwa-heritrix:
   build: ../ukwa-heritrix
   volumes:
     - ./jobs:/jobs
+    - ../ukwa-heritrix/heritrix3:/heritrix3
+    - ../../bl-heritrix-modules:/bl-heritrix-modules
   ports:
     - "8443:8443"
+  environment:
+    - "MONITRIX_ENABLED=1"
   links:
     - clamd
     - rabbitmq
