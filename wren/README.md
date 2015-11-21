@@ -34,3 +34,34 @@ Outcome of deciderules - URL and what happened.
 
 
 
+Running Wrender
+===============
+
+    $ mvn package
+
+Wrender is a Storm-based screenshotter to augment an existing crawl.
+
+http://storm.apache.org/documentation/flux.html
+
+This seems to work okay for local jobs: ```-s -1```
+
+    $ storm jar target/wren-0.0.1-SNAPSHOT.jar org.apache.storm.flux.Flux -s 3600000 --local src/main/resources/wrender.yaml
+    
+WrenBot is more like an actual crawler
+
+    $ storm jar target/wren-0.0.1-SNAPSHOT.jar org.apache.storm.flux.Flux -s 3600000 --local src/main/resources/wrenbot.yaml
+    
+Or, on the Mac at least
+
+    $ brew install zookeeper storm
+
+Start zookeeper
+
+     $ storm nimbus &
+     $ storm supervisor &
+     $ storm ui &
+     
+ Then on 8080 you get the UI, and then you can use ```--remote`` mode instead.
+ 
+    
+

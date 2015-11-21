@@ -35,7 +35,7 @@ public class PhantomJSCliRenderer {
 
     private String phantomjsPath = "phantomjs";
 
-    private String harRenderScript = "/Users/andy/Documents/workspace/wren/src/main/resources/resources/netsniff-rasterize.js";
+    private String harRenderScript = "/Users/andy/Documents/workspace/wren/wren/src/main/resources/resources/netsniff-rasterize.js";
 
     private List<String> selectors = Arrays.asList(new String[] { ":root" });
 
@@ -52,6 +52,7 @@ public class PhantomJSCliRenderer {
         cmd.addAll(selectors);
         ProcessBuilder pb = new ProcessBuilder(cmd);
         LOG.info("Running: " + pb.command());
+        // pb.redirectErrorStream(true);
         Process p = pb.start();
         // Await...
         p.waitFor();
@@ -59,6 +60,7 @@ public class PhantomJSCliRenderer {
         // Check for errors and exit if there were any:
         String stderr = IOUtils.toString(p.getErrorStream());
         if (stderr != null && stderr.length() > 0) {
+            LOG.error("Got stderr: " + stderr);
             return null;
         }
         // Read output file into string:

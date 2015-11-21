@@ -96,18 +96,22 @@ public class HarToWARCWriterBolt implements IRichBolt {
             // Make the HAR record:
             WarcRecord wr = WarcRecord.createRecord(w);
             WarcHeader header = wr.header;
+            header.warcDate = Calendar.getInstance().getTime();
             header.warcRecordIdUri = createRecordID();
             header.warcTypeIdx = WarcConstants.RT_IDX_METADATA;
             header.warcTargetUriStr = url.url;
-            header.contentLength = (long) har.length();
             header.contentType = ContentType
                     .parseContentType("application/json");
-            header.warcDate = Calendar.getInstance().getTime();
             byte[] payload = har.getBytes("UTF-8");
+            header.contentLength = (long) payload.length;
             this.addDigests(payload, header);
             w.writeHeader(wr);
             w.writePayload(payload);
             w.closeRecord();
+            // n.b. for reasons I do not understand as yet,
+            // the har.length() can differ from the payload.length
+            // (usually by 1, it seems)
+            LOG.info("HAR length() " + har.length() + " v. " + payload.length);
             // All has gone well, so ACK:
             _collector.ack(input);
         } catch (Exception e) {

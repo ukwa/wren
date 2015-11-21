@@ -81,29 +81,15 @@ config:
   - description=description
   - canonical=canonical
 
-  #rabbitmq.uri
-  # or
-  #rabbitmq.host
-  #rabbitmq.port
-  #rabbitmq.username
-  #rabbitmq.password
-  #rabbitmq.virtualhost
-  #rabbitmq.heartbeat
-  #rabbitmq.ssl: false
-  #
-  #rabbitmq.prefetchCount
-  #rabbitmq.queueName
-  #rabbitmq.requeueOnFail
-  #
-  rabbitmq.queueName: ""
-  rabbitmq.requeueOnFail: true
-  rabbitmq.prefetchCount: 2
-
+  rabbitmq.uri: "amqp://guest:guest@localhost/%2f"  
   rabbitmq.exchangeName: "wren"
   rabbitmq.routingKey: ""
+  rabbitmq.queueName: ""
   rabbitmq.contentType: "text/plain"
   rabbitmq.contentEncoding: "UTF-8"
   rabbitmq.persistent: true
+  rabbitmq.requeueOnFail: true
+  rabbitmq.prefetchCount: 2
 
 components:
   - id: "stringScheme"

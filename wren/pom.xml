@@ -2,18 +2,17 @@
    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
    <modelVersion>4.0.0</modelVersion>
 
-   <groupId>uk.bl.wa.teacup</groupId>
-   <artifactId>teacup</artifactId>
+   <groupId>uk.bl.wa.wren</groupId>
    <version>0.0.1-SNAPSHOT</version>
    <packaging>jar</packaging>
 
-   <name>teacup</name>
+   <name>wren</name>
    <url>http://maven.apache.org</url>
 
    <properties>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-      <storm.version>0.10.0-beta1</storm.version>
+      <storm.version>0.10.0</storm.version>
    </properties>
 
    <dependencies>
@@ -48,12 +47,12 @@
       <dependency>
          <groupId>com.digitalpebble</groupId>
          <artifactId>storm-crawler-core</artifactId>
-         <version>0.6</version>
+         <version>0.7</version>
       </dependency>
       <dependency>
          <groupId>io.latent</groupId>
          <artifactId>storm-rabbitmq</artifactId>
-         <version>0.6.0</version>
+         <version>0.6.1</version>
       </dependency>
       <dependency>
          <groupId>org.jwat</groupId>
@@ -175,4 +174,5 @@
          </plugin>
       </plugins>
    </build>
+   <artifactId>wren</artifactId>
 </project>
