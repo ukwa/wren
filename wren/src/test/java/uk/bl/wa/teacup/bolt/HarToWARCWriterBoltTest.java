@@ -6,6 +6,8 @@ package uk.bl.wa.teacup.bolt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.io.UnsupportedEncodingException;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -71,6 +73,21 @@ public class HarToWARCWriterBoltTest {
 
         // And clean up:
         hw.cleanup();
+    }
+
+    @Test
+    public void lengthCheck() throws UnsupportedEncodingException {
+        // The input string for this test
+        char end = 0x0d;
+        final String string = "Hello World" + end;
+        System.out.println("'" + string + "'");
+
+        // Check length, in characters
+        System.out.println(string.length()); // prints "11"
+
+        // Check encoded sizes
+        final byte[] utf8Bytes = string.getBytes("UTF-8");
+        System.out.println(utf8Bytes.length); // prints "11"
     }
 
 }

@@ -542,7 +542,7 @@ metadata.description=UK Legal Deposit Test Crawl.
         <ref bean="warcWriterDefault"/>
         <ref bean="persistStoreProcessor"/>
 <!-- send the crawl log to a queue for downstream checks -->
-        <!-- ref bean="crawlLogFeed"/ -->
+        <ref bean="crawlLogFeed"/>
 <!-- ...send each outlink candidate URI to CandidateChain, 
          and enqueue those ACCEPTed to the frontier... -->
         <ref bean="candidates"/>

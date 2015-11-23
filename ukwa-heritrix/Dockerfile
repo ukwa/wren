@@ -21,6 +21,8 @@ ADD filebeat.yml /etc/filebeat/filebeat.yml
 
 ADD start.sh /start.sh
 
+COPY logging.properties /logging.properties
+
 EXPOSE 8443
 
 ENV FOREGROUND true

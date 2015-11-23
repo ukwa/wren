@@ -1,7 +1,7 @@
 # topology definition
 
 # name to be used when submitting
-name: "wren"
+name: "wrender"
 
 # topology configuration
 config:
@@ -12,15 +12,15 @@ config:
   topology.kryo.register: 
   - com.digitalpebble.storm.crawler.Metadata
 
-  rabbitmq.queueName: ""
-  rabbitmq.requeueOnFail: true
-  rabbitmq.prefetchCount: 2
-
+  rabbitmq.uri: "amqp://guest:guest@localhost/%2f"
   rabbitmq.exchangeName: "wren"
   rabbitmq.routingKey: ""
+  rabbitmq.queueName: ""
   rabbitmq.contentType: "application/json"
   rabbitmq.contentEncoding: "UTF-8"
   rabbitmq.persistent: true
+  rabbitmq.requeueOnFail: true
+  rabbitmq.prefetchCount: 2
 
 components:
   - id: "messageScheme"
@@ -77,7 +77,7 @@ bolts:
     className: "uk.bl.wa.wren.bolt.HarToWARCWriterBolt"
     properties:
       - name: "outputFolder"
-        value: "/Users/andy/Documents/workspace/teacup/warcs/"
+        value: "/Users/andy/Documents/workspace/wren/wren/warcs/"
     parallelism: 1
     
 

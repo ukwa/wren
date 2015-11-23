@@ -7,7 +7,7 @@ class WebRenderBolt(storm.BasicBolt):
     
     def get_har_with_image(self, url, selectors=None):
         """Gets the raw HAR output from PhantomJs with rendered image(s)."""
-        tmp = "%s/%s.json" % ("/var/tmp", str(random.randint(0, 100)))
+        tmp = "%s/%s.json" % ("/var/tmp", str(random.randint(0, 1000000)))
         command = ["phantomjs", "netsniff-rasterize.js", url, tmp]
         if selectors is not None:
             command += selectors
