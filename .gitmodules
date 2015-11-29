@@ -1,24 +1,24 @@
 [submodule "webrender-har-daemon"]
 	path = webrender-har-daemon
-	url = git@github.com:ukwa/python-har-daemon.git
+	url = https://github.com/ukwa/python-har-daemon.git
 [submodule "webrender-phantomjs"]
 	path = webrender-phantomjs
-	url = git@github.com:ukwa/webrender-phantomjs.git
+	url = https://github.com/ukwa/webrender-phantomjs.git
 [submodule "monitrix"]
 	path = monitrix
-	url = git@github.com:ukwa/monitrix.git
+	url = https://github.com/ukwa/monitrix.git
 [submodule "acid-crawl"]
 	path = acid-crawl
-	url = git@github.com:ukwa/acid-crawl.git
+	url = https://github.com/ukwa/acid-crawl.git
 [submodule "ukwa-heritrix/heritrix3"]
 	path = ukwa-heritrix/heritrix3
-	url = git@github.com:ukwa/heritrix3.git
+	url = https://github.com/ukwa/heritrix3.git
 [submodule "ukwa-heritrix/bl-heritrix-modules"]
 	path = ukwa-heritrix/bl-heritrix-modules
-	url = git@github.com:ukwa/bl-heritrix-modules.git
+	url = https://github.com/ukwa/bl-heritrix-modules.git
 [submodule "w3act/w3act"]
 	path = w3act/w3act
-	url = git@github.com:ukwa/w3act.git
+	url = https://github.com/ukwa/w3act.git
 [submodule "shepherd/python-w3act"]
 	path = shepherd/python-w3act
 	url = https://github.com/ukwa/python-w3act.git
