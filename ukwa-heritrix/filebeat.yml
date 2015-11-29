@@ -3,11 +3,12 @@ filebeat:
   prospectors:
     -
       paths:
-        - "/output/logs/*/crawl.log"
+        - "/heritrix/output/logs/*/crawl.log"
+        - "/heritrix/output/logs/*/*/crawl.log"
       type: log
       document_type: heritrix
       fields:
-        crawl_id: bl-test-crawl
+        crawl_id: test-crawler
 
 shipper:
   name: heritrix

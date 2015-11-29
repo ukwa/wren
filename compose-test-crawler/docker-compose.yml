@@ -21,8 +21,8 @@ ukwa-heritrix:
 dvc:
   image: busybox
   volumes:
-    - ./output:/output
-    - ./state:/state
+    - ./output:/heritrix/output
+#    - ./state:/heritrix/state
 
 # Clamd virus scanning Service
 clamd:
@@ -95,13 +95,21 @@ monitrix:
 #  ports: 
 #    - "2181"
 
+# tinycdxserver
+cdxserver:
+  build: ../tinycdxserver
+  volumes:
+    - ./cdx:/data
+
+
 # OpenWayback, based loosely on UNB Libraries Dockerfile
-#openwayback:
-#  build: ../openwayback
-#  ports:
-#    - "8080:8080"
-#  environment:
-#    - WAYBACK_BASEDIR=/data
-#    - WAYBACK_URL_HOST=192.168.99.100
-#  volumes_from:
-#    - dvc:ro
+openwayback:
+  build: ../openwayback
+  ports:
+    - "8080:8080"
+  environment:
+    - "WAYBACK_BASEDIR=/data"
+    - "WAYBACK_URL_HOST=192.168.99.100"
+    - "CDX_SERVERS=http://cdxserver:8080"
+  volumes_from:
+    - dvc:ro

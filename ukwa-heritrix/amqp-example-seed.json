@@ -1,12 +1,18 @@
- {
+{
     "headers": {
         "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/37.0.2062.120 Chrome/37.0.2062.120 Safari/537.36",
     },
     "method": "GET",
     "parentUrl": "http://acid.matkelly.com/",
     "parentUrlMetadata": {
-    	"pathFromSeed": "",
-    	"heritableData": {}
+        "pathFromSeed": "",
+        "heritableData": {
+            "source": "http://acid.matkelly.com/",
+            "crawlId": "aat",
+            "watched": "false",
+            "heritable": ["source", "crawlId", "watched", "heritable"]
+        }
     },
+    "isSeed": "true",
     "url": "http://acid.matkelly.com/"
 }

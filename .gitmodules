@@ -19,6 +19,12 @@
 [submodule "w3act/w3act"]
 	path = w3act/w3act
 	url = git@github.com:ukwa/w3act.git
-[submodule "w3act-to-heritrix/python-w3act"]
-	path = w3act-to-heritrix/python-w3act
-	url = git@github.com:ukwa/python-w3act.git
+[submodule "shepherd/python-w3act"]
+	path = shepherd/python-w3act
+	url = https://github.com/ukwa/python-w3act.git
+[submodule "shepherd/python-heritrix"]
+	path = shepherd/python-heritrix
+	url = https://github.com/ukwa/python-heritrix.git
+[submodule "shepherd/python-webhdfs"]
+	path = shepherd/python-webhdfs
+	url = https://github.com/ukwa/python-webhdfs.git
