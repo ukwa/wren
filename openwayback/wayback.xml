@@ -324,7 +324,6 @@
     Note: using this AccessPoint requires adding a "Connector" on port 8090
          in your Tomcat's server.xml file.
  -->
-<!--
   <import resource="ProxyReplay.xml"/>
   <bean name="proxyaccesspoint" parent="standardaccesspoint">
     <property name="accessPointPath" value="8090"/>
@@ -335,13 +334,13 @@
     <property name="bounceToQueryPrefix" value="false" />
     <property name="refererAuth" value="" />
 
-    <property name="staticPrefix" value="http://localhost:8090/" />
-    <property name="replayPrefix" value="http://localhost:8090/" />
-    <property name="queryPrefix" value="http://localhost:8090/" />
+    <property name="staticPrefix" value="http://${wayback.url.host}:8090/" />
+    <property name="replayPrefix" value="http://${wayback.url.host}:8090/" />
+    <property name="queryPrefix" value="http://${wayback.url.host}:8090/" />
     <property name="replay" ref="proxyreplay" />
     <property name="uriConverter">
       <bean class="org.archive.wayback.proxy.RedirectResultURIConverter">
-        <property name="redirectURI" value="http://localhost:8090/jsp/QueryUI/Redirect.jsp" />
+        <property name="redirectURI" value="http://${wayback.url.host}:8090/jsp/QueryUI/Redirect.jsp" />
       </bean>
     </property>
     <property name="parser">
@@ -349,6 +348,7 @@
         <property name="localhostNames">
           <list>
             <value>localhost</value>
+            <value>${wayback.url.host}</value>
           </list>
         </property>
         <property name="maxRecords" value="1000" />
@@ -356,6 +356,7 @@
       </bean>
     </property>
   </bean>
+<!--
 -->
 
 <!--

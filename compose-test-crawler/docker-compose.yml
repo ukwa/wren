@@ -124,6 +124,7 @@ openwayback:
   build: ../openwayback
   ports:
     - "8080:8080"
+    - "8090:8090"
   environment:
     - "WAYBACK_BASEDIR=/data"
     - "WAYBACK_URL_HOST=192.168.99.100"

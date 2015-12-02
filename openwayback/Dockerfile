@@ -32,13 +32,18 @@ RUN \
 RUN \
   unzip /openwayback/wayback-webapp/target/openwayback-2.3.0-SNAPSHOT.war -d /opt/tomcat/webapps/ROOT
 
+COPY server.xml /opt/apache-tomcat-7.0.65/conf/server.xml
+
+COPY logging.properties /opt/apache-tomcat-7.0.65/conf/logging.properties
+COPY logging.properties /opt/apache-tomcat-7.0.65/webapps/ROOT/WEB-INF/classes/logging.properties
+
 COPY wayback.xml /opt/tomcat/webapps/ROOT/WEB-INF/
 
 COPY RemoteCollection.xml /opt/tomcat/webapps/ROOT/WEB-INF/
 
 COPY CDXCollection.xml /opt/tomcat/webapps/ROOT/WEB-INF/
 
-EXPOSE 8080
+EXPOSE 8080 8090
 
 ENV JAVA_OPTS -Xmx2g
 
