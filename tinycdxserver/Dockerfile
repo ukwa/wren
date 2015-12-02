@@ -23,5 +23,8 @@ RUN /rocksdb-bootstrap.sh
 COPY ./tinycdxserver-bootstrap.sh /
 RUN /tinycdxserver-bootstrap.sh
 
+RUN mkdir /cdx-data
+
 EXPOSE 8080
-CMD /usr/lib/jvm/java-8-oracle/bin/java -jar tinycdxserver/tinycdxserver.jar -d /data -p 8080
+
+CMD /usr/lib/jvm/java-8-oracle/bin/java -jar tinycdxserver/tinycdxserver.jar -d /cdx-data -p 8080

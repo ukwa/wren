@@ -56,6 +56,20 @@ har-daemon:
   volumes_from:
     - dvc:rw
 
+# HAR Daemon that connects Heritrix to Webrender via RabbitMQ
+shepherd:
+  build: ../shepherd
+  environment:
+    - "AMQP_URL=amqp://guest:guest@rabbitmq:5672/%2f"
+    - "QUEUE_NAME=crawl-log-feed"
+    - "LOG_FILE=logtocdx.log"
+    - "DUMMY_RUN="
+  links:
+    - rabbitmq
+    - webrender
+  volumes_from:
+    - dvc:rw
+
 # Monitrix, built on ELK by extending Logstash to support Heritrix logs.
 monitrix:
   build: ../monitrix
@@ -98,8 +112,11 @@ monitrix:
 # tinycdxserver
 cdxserver:
   build: ../tinycdxserver
-  volumes:
-    - ./cdx:/data
+  ports:
+    - "9090:8080"
+# I don't think this works on dev systems - should be fine in live.
+#  volumes:
+#    - ./cdx:/data
 
 
 # OpenWayback, based loosely on UNB Libraries Dockerfile
@@ -110,6 +127,9 @@ openwayback:
   environment:
     - "WAYBACK_BASEDIR=/data"
     - "WAYBACK_URL_HOST=192.168.99.100"
-    - "CDX_SERVERS=http://cdxserver:8080"
+    - "WAYBACK_URL_PREFIX=http://192.168.99.100:8080"
+    - "CDX_INDEX_SERVER=http://cdxserver:8080/fc"
+  links:
+    - cdxserver
   volumes_from:
     - dvc:ro

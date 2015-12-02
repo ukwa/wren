@@ -34,6 +34,8 @@ RUN \
 
 COPY wayback.xml /opt/tomcat/webapps/ROOT/WEB-INF/
 
+COPY RemoteCollection.xml /opt/tomcat/webapps/ROOT/WEB-INF/
+
 COPY CDXCollection.xml /opt/tomcat/webapps/ROOT/WEB-INF/
 
 EXPOSE 8080

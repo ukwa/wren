@@ -1,0 +1,20 @@
+{
+    "annotations": "",
+    "content_digest": "sha1:K2LWBQ7LTITOE5YKVWC3RNE4CNTWYLRY",
+    "content_length": null,
+    "extra_info": {},
+    "hop_path": "P",
+    "host": "dns:",
+    "jobName": "bl-test-crawl",
+    "mimetype": "text/dns",
+    "seed": "http://acid.matkelly.com/",
+    "size": 61,
+    "start_time_plus_duration": "20151201225809458+399",
+    "status_code": 1,
+    "thread": 2,
+    "timestamp": "2015-12-01T22:58:13.611Z",
+    "url": "dns:acid.matkelly.com",
+    "via": "http://acid.matkelly.com/",
+    "warc_filename": "BL-20151201225813592-00001-37~157a2278f619~8443.warc.gz",
+    "warc_offset": 528
+}

@@ -28,3 +28,6 @@
 [submodule "shepherd/python-webhdfs"]
 	path = shepherd/python-webhdfs
 	url = https://github.com/ukwa/python-webhdfs.git
+[submodule "shepherd/python-shepherd"]
+	path = shepherd/python-shepherd
+	url = https://github.com/ukwa/python-shepherd.git
