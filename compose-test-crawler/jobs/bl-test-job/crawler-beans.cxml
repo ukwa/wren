@@ -915,7 +915,7 @@ metadata.description=UK Legal Deposit Test Crawl.
   </bean>
 <!-- CHECKPOINTSERVICE: checkpointing assistance -->
   <bean id="checkpointService" class="org.archive.crawler.framework.CheckpointService">
-    <property name="checkpointIntervalMinutes" value="5"/>
+    <property name="checkpointIntervalMinutes" value="60"/>
 <!-- <property name="checkpointsDir" value="checkpoints"/> -->
 <!-- <property name="forgetAllButLatest" value="false"/> -->
   </bean>

@@ -30,17 +30,39 @@
 
   <bean id="remotecollection" class="org.archive.wayback.webapp.WaybackCollection">
 
+  	<!-- This defines the set of places the OWB can look for WARC files -->
     <property name="resourceStore">
-      <bean class="org.archive.wayback.resourcestore.SimpleResourceStore">
-        <property name="prefix" value="/heritrix/output/warcs/" />
+      <bean class="org.archive.wayback.resourcestore.MultipleResourceStore">
+      	<property name="failOnFirstUnavailable" value="false"/>
+        <property name="stores">
+          <list>
+            <ref bean="localdiskresourcestore" />
+            <ref bean="localdiskopenwarcsresourcestore" />
+          </list>
+ 	    </property>
       </bean>
     </property>
 
+    <!-- This defines where OWB looks for CDX information -->
     <property name="resourceIndex">
       <bean class="org.archive.wayback.resourceindex.RemoteResourceIndex">
         <property name="searchUrlBase" value="#{ systemEnvironment['CDX_INDEX_SERVER'] ?: 'http://cdxserver:8080/fc' }" />
       </bean>
     </property>
+
   </bean>
+
+  <!-- This ResourceStore just looks in the WARC output folder. -->
+  <bean id="localdiskresourcestore" class="org.archive.wayback.resourcestore.SimpleResourceStore">
+    <property name="prefix" value="/heritrix/output/warcs/" />
+  </bean>
+
+  <!-- This ResourceStore looks in the WARC output folder, but looks for open WARC files. -->
+  <bean id="localdiskopenwarcsresourcestore" class="org.archive.wayback.resourcestore.SimpleResourceStore">
+    <property name="regex" value="^(.*)$" />
+    <property name="replace" value="/heritrix/output/warcs/$1.open"/>
+  </bean>
+
+
 
 </beans>

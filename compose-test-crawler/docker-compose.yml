@@ -79,6 +79,31 @@ monitrix:
     - "5000:5000"
     - "5044:5044"
 
+# tinycdxserver
+cdxserver:
+  build: ../tinycdxserver
+  ports:
+    - "9090:8080"
+# I don't think this works on dev systems - should be fine in live.
+#  volumes:
+#    - ./cdx:/data
+
+# OpenWayback, based loosely on UNB Libraries Dockerfile
+openwayback:
+  build: ../openwayback
+  ports:
+    - "8080:8080"
+    - "8090:8090"
+  environment:
+    - "WAYBACK_BASEDIR=/data"
+    - "WAYBACK_URL_HOST=192.168.99.100"
+    - "WAYBACK_URL_PREFIX=http://192.168.99.100:8080"
+    - "CDX_INDEX_SERVER=http://cdxserver:8080/fc"
+  links:
+    - cdxserver
+  volumes_from:
+    - dvc:ro
+
 ## W3ACT (build in place and run)
 #w3act:
 #  build: ../w3act
@@ -108,29 +133,3 @@ monitrix:
 #  image: wurstmeister/zookeeper
 #  ports: 
 #    - "2181"
-
-# tinycdxserver
-cdxserver:
-  build: ../tinycdxserver
-  ports:
-    - "9090:8080"
-# I don't think this works on dev systems - should be fine in live.
-#  volumes:
-#    - ./cdx:/data
-
-
-# OpenWayback, based loosely on UNB Libraries Dockerfile
-openwayback:
-  build: ../openwayback
-  ports:
-    - "8080:8080"
-    - "8090:8090"
-  environment:
-    - "WAYBACK_BASEDIR=/data"
-    - "WAYBACK_URL_HOST=192.168.99.100"
-    - "WAYBACK_URL_PREFIX=http://192.168.99.100:8080"
-    - "CDX_INDEX_SERVER=http://cdxserver:8080/fc"
-  links:
-    - cdxserver
-  volumes_from:
-    - dvc:ro

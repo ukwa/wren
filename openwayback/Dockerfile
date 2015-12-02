@@ -25,8 +25,9 @@ RUN chmod +x /opt/tomcat/bin/catalina.sh
 RUN cd /opt/tomcat/webapps && rm -rf *
 
 RUN \
-  git clone https://github.com/iipc/openwayback.git && \
+  git clone https://github.com/ukwa/openwayback.git && \
   cd openwayback && \
+  git checkout use-correct-archive-filename && \
   mvn install -DskipTests
 
 RUN \
