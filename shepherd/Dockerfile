@@ -5,7 +5,7 @@ ADD yum.conf /etc/yum.conf
 RUN \
   yum install -y epel-release && \
   yum install -y git python-pip python-devel libpng-devel libjpeg-devel gcc gcc-c++ make libffi-devel openssl-devel supervisor && \
-  pip install --trusted-host pypi.python.org requests[security] pika gunicorn
+  pip install --trusted-host pypi.python.org requests[security] pika gunicorn supervisor-stdout
 
 ADD python-shepherd /python-shepherd
 
