@@ -44,6 +44,8 @@ webrender:
   build: ../webrender-phantomjs
   ports:
     - "8000:8000"
+  links:
+    - openwayback
 
 # HAR Daemon that connects Heritrix to Webrender via RabbitMQ
 har-daemon:
@@ -62,7 +64,6 @@ shepherd:
   environment:
     - "AMQP_URL=amqp://guest:guest@rabbitmq:5672/%2f"
     - "QUEUE_NAME=crawl-log-feed"
-    - "LOG_FILE=logtocdx.log"
     - "DUMMY_RUN="
   links:
     - rabbitmq
