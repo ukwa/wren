@@ -12,9 +12,9 @@ RUN \
   apt-get install -y tar wget curl git maven
 
 # move to /opt and download the tomcat package
-RUN cd /opt && wget "http://www.mirrorservice.org/sites/ftp.apache.org/tomcat/tomcat-7/v7.0.65/bin/apache-tomcat-7.0.65.tar.gz" 
-RUN cd /opt && tar -zxvf apache-tomcat-7.0.65.tar.gz 
-RUN cd /opt && ln -sf apache-tomcat-7.0.65 tomcat
+RUN cd /opt && wget "http://www.mirrorservice.org/sites/ftp.apache.org/tomcat/tomcat-7/v7.0.67/bin/apache-tomcat-7.0.67.tar.gz" 
+RUN cd /opt && tar -zxvf apache-tomcat-7.0.67.tar.gz 
+RUN cd /opt && ln -sf apache-tomcat-7.0.67 tomcat
 
 # make tomcat scripts executable
 RUN chmod +x /opt/tomcat/bin/startup.sh
@@ -27,16 +27,16 @@ RUN cd /opt/tomcat/webapps && rm -rf *
 RUN \
   git clone https://github.com/ukwa/openwayback.git && \
   cd openwayback && \
-  git checkout use-correct-archive-filename && \
+  git checkout master && \
   mvn install -DskipTests
 
 RUN \
   unzip /openwayback/wayback-webapp/target/openwayback-2.3.0-SNAPSHOT.war -d /opt/tomcat/webapps/ROOT
 
-COPY server.xml /opt/apache-tomcat-7.0.65/conf/server.xml
+COPY server.xml /opt/apache-tomcat-7.0.67/conf/server.xml
 
-COPY logging.properties /opt/apache-tomcat-7.0.65/conf/logging.properties
-COPY logging.properties /opt/apache-tomcat-7.0.65/webapps/ROOT/WEB-INF/classes/logging.properties
+COPY logging.properties /opt/apache-tomcat-7.0.67/conf/logging.properties
+COPY logging.properties /opt/apache-tomcat-7.0.67/webapps/ROOT/WEB-INF/classes/logging.properties
 
 COPY wayback.xml /opt/tomcat/webapps/ROOT/WEB-INF/
 

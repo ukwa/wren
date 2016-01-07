@@ -75,9 +75,10 @@ shepherd:
     - "AMQP_URL=amqp://guest:guest@rabbitmq:5672/%2f"
     - "QUEUE_NAME=crawl-log-feed"
     - "DUMMY_RUN="
+    - "CDX_SERVER_URL=http://cdxserver:8080/fc"
   links:
     - rabbitmq
-    - webrender
+    - cdxserver
   volumes_from:
     - dvc:rw
 
@@ -107,8 +108,8 @@ openwayback:
     - "8090:8090"
   environment:
     - "WAYBACK_BASEDIR=/data"
-    - "WAYBACK_URL_HOST=192.168.99.100"
-    - "WAYBACK_URL_PREFIX=http://192.168.99.100:8080"
+    - "WAYBACK_URL_HOST=194.88.232.89"
+    - "WAYBACK_URL_PREFIX=http://194.66.232.89:8080"
     - "CDX_INDEX_SERVER=http://cdxserver:8080/fc"
   links:
     - cdxserver
