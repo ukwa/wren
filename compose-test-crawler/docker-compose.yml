@@ -24,6 +24,15 @@ dvc:
     - ./output:/heritrix/output
 #    - ./state:/heritrix/state
 
+# A redis instance to act as the "already-seen URI" cache
+redis:
+  image: redis:3.0
+  command: "redis-server --appendonly yes"
+  ports:
+    - "6379:6379"
+  volumes:
+    - ./redis/:/data
+
 # Clamd virus scanning Service
 clamd:
   build: ../clamd
@@ -40,6 +49,7 @@ rabbitmq:
   log_driver: none
 
 # PhantomJS web page rendering service
+# TODO pick up proxy from the environment
 webrender:
   build: ../webrender-phantomjs
   ports:

@@ -146,7 +146,7 @@ metadata.description=UK Legal Deposit Test Crawl.
   </bean>
 <!-- ...but REJECT those more than a configured link-hop-count from start... -->
   <bean id="hopsCountReject" class="org.archive.modules.deciderules.TooManyHopsDecideRule">
-    <property name="maxHops" value="20"/>
+    <property name="maxHops" value="3"/>
   </bean>
 <!-- ...and REJECT those from a configurable (initially empty) set of URI regexes... -->
   <bean id="listRegexFilterOut" class="org.archive.modules.deciderules.MatchesListRegexDecideRule">
@@ -513,7 +513,7 @@ metadata.description=UK Legal Deposit Test Crawl.
     <!-- <property name="startNewFilesOnCheckpoint" value="true" /> -->
   </bean>
   <!-- This provides a crawl log feed to a queue - note that you'll need to set up a binding that matches these parameters to a queue -->
-  <bean id="crawlLogFeed" class="org.archive.modules.postprocessor.AMQPCrawlLogFeed">
+  <bean id="crawlLogFeed" class="uk.bl.wap.crawler.processor.AMQPIndexableCrawlLogFeed">
     <property name="routingKey" value="crawl-log-feed"/>
     <property name="exchange" value="heritrix"/>
     <property name="amqpUri" value="amqp://guest:guest@rabbitmq:5672/%2f"/>
@@ -602,8 +602,13 @@ metadata.description=UK Legal Deposit Test Crawl.
   <bean id="uriUniqFilter" class="org.archive.crawler.util.BloomUriUniqFilter">
  </bean>
 -->
- <bean id="uriUniqFilter" class="uk.bl.wap.util.RecentlySeenUriUniqFilter">
+ <bean id="uriUniqFilter" class="uk.bl.wap.util.EhcacheRecentlySeenUriUniqFilter">
     <property name="cacheStorePath" value="/heritrix/state/#{metadata.jobName}/recentlySeen"/>
+    <property name="textSource">
+      <bean class="org.archive.spring.ConfigFile">
+        <property name="path" value="surt-to-ttl.txt"/>
+      </bean>
+    </property>
  </bean>
 <!--
    EXAMPLE SETTINGS OVERLAY SHEETS
