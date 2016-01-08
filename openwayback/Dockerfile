@@ -27,7 +27,7 @@ RUN cd /opt/tomcat/webapps && rm -rf *
 RUN \
   git clone https://github.com/ukwa/openwayback.git && \
   cd openwayback && \
-  git checkout master && \
+  git checkout rri-resolve-revisits && \
   mvn install -DskipTests
 
 RUN \
