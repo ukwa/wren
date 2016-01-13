@@ -22,6 +22,7 @@ dvc:
   image: busybox
   volumes:
     - ./output:/heritrix/output
+    - ./output/images:/images
 #    - ./state:/heritrix/state
 
 # A redis instance to act as the "already-seen URI" cache
@@ -108,8 +109,8 @@ openwayback:
     - "8090:8090"
   environment:
     - "WAYBACK_BASEDIR=/data"
-    - "WAYBACK_URL_HOST=194.88.232.89"
-    - "WAYBACK_URL_PREFIX=http://194.66.232.89:8080"
+    - "WAYBACK_URL_HOST=${DOCKER_HOSTNAME}"
+    - "WAYBACK_URL_PREFIX=http://${DOCKER_HOSTNAME}:8080"
     - "CDX_INDEX_SERVER=http://cdxserver:8080/fc"
   links:
     - cdxserver

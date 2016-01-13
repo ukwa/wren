@@ -31,7 +31,7 @@ config:
   - key3  
 
   http.agent.name: "WrenBot"
-  http.agent.version: "1.0"
+  http.agent.version: "0.1"
   http.agent.description: "a scalable rendering web crawler"
   http.agent.url: "https://github.com/anjackson/wren"
   http.agent.email: "anj@anjackson.net"

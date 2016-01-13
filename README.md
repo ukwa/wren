@@ -36,8 +36,10 @@ As individual services stabilize, it should be possible to remove these submodul
 
 
 Problems:
+- Redirects not working as via looks backwards not forwards! - May need separate logfeeder.
 - https://www.webarchive.org.uk/act/wayback/20150320113132/http://www.bbc.co.uk/news/ then https://www.webarchive.org.uk/act/wayback/20150324131847/http://www.bbc.co.uk/news and BBC rollout articles?
 - http://www.theguardian.com/help/insideguardian/2015/jan/28/welcome-to-the-new-guardian-website
+
 
 Wren Storm Topologies
 ---------------------
