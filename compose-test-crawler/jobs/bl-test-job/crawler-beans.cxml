@@ -926,6 +926,12 @@ metadata.description=UK Legal Deposit Test Crawl.
 <!-- <property name="checkpointsDir" value="checkpoints"/> -->
 <!-- <property name="forgetAllButLatest" value="false"/> -->
   </bean>
+<!--  CHECKPOINTSUCCESSEVENTS: this bean listens for successful checkpoints and sends a message to AMQP whenever one occurs. -->
+  <bean id="checkpointEventMessageSender" class="uk.bl.wap.util.AMQPCheckpointSuccessMessageProducer">
+    <property name="routingKey" value="checkpoint-events"/>
+    <property name="exchange" value="heritrix"/>
+    <property name="amqpUri" value="amqp://guest:guest@rabbitmq:5672/%2f"/>
+  </bean>
 <!-- 
    OPTIONAL BEANS
     Uncomment and expand as needed, or if non-default alternate 

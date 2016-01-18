@@ -69,14 +69,13 @@ har-daemon:
   volumes_from:
     - dvc:rw
 
-# HAR Daemon that connects Heritrix to Webrender via RabbitMQ
+# Other daemons and processes that coordinate the crawl
 shepherd:
   build: ../shepherd
   environment:
     - "AMQP_URL=amqp://guest:guest@rabbitmq:5672/%2f"
     - "QUEUE_NAME=crawl-log-feed"
-    - "DUMMY_RUN="
-    - "CDX_SERVER_URL=http://cdxserver:8080/fc"
+    - "CDXSERVER_URL=http://cdxserver:8080/fc"
   links:
     - rabbitmq
     - cdxserver
