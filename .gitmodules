@@ -40,3 +40,6 @@
 [submodule "pdf2htmlex"]
 	path = pdf2htmlex
 	url = https://github.com/ukwa/docker-pdf2htmlex.git
+[submodule "grobid"]
+	path = grobid
+	url = https://github.com/ukwa/docker-grobid.git
