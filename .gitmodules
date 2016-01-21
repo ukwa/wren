@@ -37,3 +37,6 @@
 [submodule "tinycdxserver"]
 	path = tinycdxserver
 	url = https://github.com/ukwa/docker-tinycdxserver.git
+[submodule "pdf2htmlex"]
+	path = pdf2htmlex
+	url = https://github.com/ukwa/docker-pdf2htmlex.git
