@@ -49,3 +49,6 @@
 [submodule "warcprox-squid"]
 	path = warcprox-squid
 	url = https://github.com/ukwa/docker-warcprox-squid.git
+[submodule "openwayback"]
+	path = openwayback
+	url = https://github.com/ukwa/docker-openwayback.git
