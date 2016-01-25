@@ -1,0 +1,105 @@
+# UKWA Heritrix
+ukwa-heritrix:
+  build: ../ukwa-heritrix
+  volumes:
+    - ./jobs:/jobs
+    - ../../heritrix3:/heritrix3
+    - ../../bl-heritrix-modules:/bl-heritrix-modules
+  ports:
+    - "8443:8443"
+#  environment:
+#    - "MONITRIX_ENABLED=1"
+  links:
+    - clamd
+    - rabbitmq
+#    - monitrix
+  volumes_from:
+    - dvc:rw
+
+# Data Volume Container
+# - This is the recommended way to share a data volume between containers.
+dvc:
+  image: busybox
+  volumes:
+    - ./output:/heritrix/output
+    - ./images:/images
+    - ./state:/heritrix/state
+
+# Clamd virus scanning Service
+clamd:
+  build: ../clamd
+  ports:
+    - "3310:3310"
+
+# RabbitMQ
+rabbitmq:
+  image: rabbitmq:3.5-management
+  ports:
+    - "15672:15672"  # management port (guest:guest)
+    - "5672:5672"   # amqp port
+    - "25672:25672" # cluster port
+  log_driver: none
+
+# PhantomJS web page rendering service
+# TODO pick up proxy from the environment
+webrender:
+  build: ../webrender-phantomjs
+  ports:
+    - "8000:8000"
+  links:
+    - openwayback
+
+# Other daemons and processes that coordinate the crawl
+shepherd:
+  build: ../shepherd
+  environment:
+    - "AMQP_URL=amqp://guest:guest@rabbitmq:5672/%2f"
+    - "QUEUE_NAME=FC-4-uris-to-index"
+    - "CDXSERVER_URL=http://cdxserver:8080/fc"
+  links:
+    - rabbitmq
+    - cdxserver
+    - webrender
+  volumes_from:
+    - dvc:rw
+
+# tinycdxserver
+cdxserver:
+  build: ../tinycdxserver
+  ports:
+    - "9090:8080"
+# I don't think this works on dev systems - should be fine in live.
+#  volumes:
+#    - ./cdx:/data
+  volumes:
+    - /heritrix/cdx:/data
+
+# OpenWayback, based loosely on UNB Libraries Dockerfile
+openwayback:
+  build: ../openwayback
+  ports:
+    - "8080:8080"
+    - "8090:8090"
+  environment:
+    - "WAYBACK_BASEDIR=/data"
+    - "WAYBACK_URL_HOST=${DOCKER_HOSTNAME}"
+    - "WAYBACK_URL_PREFIX=http://${DOCKER_HOSTNAME}:8080"
+    - "CDX_INDEX_SERVER=http://cdxserver:8080/fc"
+  links:
+    - cdxserver
+  volumes_from:
+    - dvc:ro
+
+## W3ACT (build in place and run)
+#w3act:
+#  build: ../w3act
+#  volumes:
+#    - ../w3act/w3act/target/universal/stage:/w3act
+#  ports:
+#    - "9000:9000"#
+
+## For W3ACT data
+#postgres:
+#  image: postgres:9.4
+#  environment:
+#    - "POSTGRES_PASSWORD=pgpwd"#
