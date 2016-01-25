@@ -23,7 +23,7 @@ dvc:
   volumes:
     - ./output:/heritrix/output
     - ./output/images:/images
-#    - ./state:/heritrix/state
+    - ./state:/heritrix/state
 
 # A redis instance to act as the "already-seen URI" cache
 redis:
@@ -74,11 +74,12 @@ shepherd:
   build: ../shepherd
   environment:
     - "AMQP_URL=amqp://guest:guest@rabbitmq:5672/%2f"
-    - "QUEUE_NAME=crawl-log-feed"
+    - "QUEUE_NAME=FC-4-uris-to-index"
     - "CDXSERVER_URL=http://cdxserver:8080/fc"
   links:
     - rabbitmq
     - cdxserver
+    - webrender
   volumes_from:
     - dvc:rw
 
