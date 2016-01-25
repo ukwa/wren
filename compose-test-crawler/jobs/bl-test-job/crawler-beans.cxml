@@ -335,10 +335,10 @@ metadata.description=UK Legal Deposit Test Crawl.
     <property name="outputPath" value="REPLACE_HERITRIX_JOBS/dc0-20150827/action/"/>
   </bean-->
   <bean id="extractorMq" class="org.archive.modules.AMQPPublishProcessor">
-    <property name="clientId" value="ukwa-test-crawl"/>
-    <property name="routingKey" value="to-webrender"/>
+    <property name="routingKey" value="uris-to-render"/>
     <property name="exchange" value="heritrix"/>
     <property name="amqpUri" value="amqp://guest:guest@rabbitmq:5672/%2f"/>
+    <property name="clientId" value="FC-3-uris-to-crawl"/>
     <property name="shouldProcessRule">
         <bean class="org.archive.modules.deciderules.DecideRuleSequence">
             <property name="rules">
@@ -363,7 +363,7 @@ metadata.description=UK Legal Deposit Test Crawl.
   <bean class="org.archive.crawler.frontier.AMQPUrlReceiver">
     <property name="amqpUri" value="amqp://guest:guest@rabbitmq:5672/%2f"/>
     <property name="exchange" value="heritrix"/>
-    <property name="queueName" value="ukwa-test-crawl"/>
+    <property name="queueName" value="FC-3-uris-to-crawl"/>
     <property name="durable" value="true"/>
     <property name="autoDelete" value="false"/>
   </bean>
@@ -516,7 +516,7 @@ metadata.description=UK Legal Deposit Test Crawl.
   </bean>
   <!-- This provides a crawl log feed to a queue - note that you'll need to set up a binding that matches these parameters to a queue -->
   <bean id="crawlLogFeed" class="uk.bl.wap.crawler.processor.AMQPIndexableCrawlLogFeed">
-    <property name="routingKey" value="crawl-log-feed"/>
+    <property name="routingKey" value="uris-to-index"/>
     <property name="exchange" value="heritrix"/>
     <property name="amqpUri" value="amqp://guest:guest@rabbitmq:5672/%2f"/>
     <property name="extraFields">
@@ -562,7 +562,7 @@ metadata.description=UK Legal Deposit Test Crawl.
 <!-- CRAWLCONTROLLER: Control interface, unifying context -->
   <bean id="crawlController" class="org.archive.crawler.framework.CrawlController">
     <property name="maxToeThreads" value="5"/>
-<!-- <property name="pauseAtStart" value="true" /> -->
+    <property name="pauseAtStart" value="false" />
     <property name="runWhileEmpty" value="true"/>
 <!-- <property name="recorderInBufferBytes" value="524288" /> -->
 <!-- <property name="recorderOutBufferBytes" value="16384" /> -->
@@ -611,6 +611,10 @@ metadata.description=UK Legal Deposit Test Crawl.
         <property name="path" value="surt-to-ttl.txt"/>
       </bean>
     </property>
+    <!-- rescan the file for changes every 5 minutes (300 seconds) -->
+  <!--
+    <property name="sourceCheckInterval" value="300"/>
+  -->
  </bean>
 <!--
    EXAMPLE SETTINGS OVERLAY SHEETS
@@ -925,6 +929,12 @@ metadata.description=UK Legal Deposit Test Crawl.
     <property name="checkpointIntervalMinutes" value="720"/> <!-- i.e. every 12 hours -->
 <!-- <property name="checkpointsDir" value="checkpoints"/> -->
 <!-- <property name="forgetAllButLatest" value="false"/> -->
+  </bean>
+<!--  CHECKPOINTSUCCESSEVENTS: this bean listens for successful checkpoints and sends a message to AMQP whenever one occurs. -->
+  <bean id="checkpointEventMessageSender" class="uk.bl.wap.util.AMQPCheckpointSuccessMessageProducer">
+    <property name="routingKey" value="checkpoints-to-package"/>
+    <property name="exchange" value="heritrix"/>
+    <property name="amqpUri" value="amqp://guest:guest@rabbitmq:5672/%2f"/>
   </bean>
 <!-- 
    OPTIONAL BEANS

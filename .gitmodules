@@ -31,3 +31,24 @@
 [submodule "shepherd/python-shepherd"]
 	path = shepherd/python-shepherd
 	url = https://github.com/ukwa/python-shepherd.git
+[submodule "clamd"]
+	path = clamd
+	url = https://github.com/ukwa/docker-clamd.git
+[submodule "tinycdxserver"]
+	path = tinycdxserver
+	url = https://github.com/ukwa/docker-tinycdxserver.git
+[submodule "pdf2htmlex"]
+	path = pdf2htmlex
+	url = https://github.com/ukwa/docker-pdf2htmlex.git
+[submodule "grobid"]
+	path = grobid
+	url = https://github.com/ukwa/docker-grobid.git
+[submodule "warcprox"]
+	path = warcprox
+	url = https://github.com/ukwa/docker-warcprox.git
+[submodule "warcprox-squid"]
+	path = warcprox-squid
+	url = https://github.com/ukwa/docker-warcprox-squid.git
+[submodule "openwayback"]
+	path = openwayback
+	url = https://github.com/ukwa/docker-openwayback.git

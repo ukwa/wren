@@ -1,7 +1,7 @@
 Wren
 ====
 
-An experiment aimed at building a scaleable, modular web archive system based on [Docker Compose](https://docs.docker.com/compose/) and [Apache Storm](http://storm.apache.org/).
+An experiment aimed at building a scaleable, modular web archive system based on [Docker Compose](https://docs.docker.com/compose/) and eventually, [Apache Storm](http://storm.apache.org/).
 
 To make any progress, we need to be able to effectively compare any new crawler with our current system. Therefore, we start by reproducing our existing crawl system via Docker Compose, and check we fully understand it before attempting to make any modifications. We will then look at ways of modifying, replacing or removing our current components in order to make the whole system more maintainable, manageable and scalable.
 
@@ -40,6 +40,15 @@ Problems:
 - https://www.webarchive.org.uk/act/wayback/20150320113132/http://www.bbc.co.uk/news/ then https://www.webarchive.org.uk/act/wayback/20150324131847/http://www.bbc.co.uk/news and BBC rollout articles?
 - http://www.theguardian.com/help/insideguardian/2015/jan/28/welcome-to-the-new-guardian-website
 
+Queue-based Harvest Workflow
+----------------------------
+
+FC-1-uris-to-check
+FC-2-uris-to-render
+FC-3-uris-to-crawl
+FC-4-uris-to-index
+
+FI-1-checkpoints-to-package
 
 Wren Storm Topologies
 ---------------------

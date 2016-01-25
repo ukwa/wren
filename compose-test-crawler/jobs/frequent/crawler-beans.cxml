@@ -225,6 +225,8 @@ metadata.description=UK Legal Deposit Test Crawl.
   </bean>
   <bean id="quotaEnforcer" class="org.archive.crawler.prefetch.QuotaEnforcer">
     <property name="serverMaxSuccessKb" value="524288"/>
+    <!-- This will log all out-of-quota URLs rather than just retiring the queue. -->
+    <!-- property name="forceRetire" value="false"/ -->
   </bean>
 <!-- now, processors are assembled into ordered CandidateChain bean -->
   <bean id="candidateProcessors" class="org.archive.modules.CandidateChain">
@@ -327,16 +329,9 @@ metadata.description=UK Legal Deposit Test Crawl.
   </bean>
   <bean id="extractorJson" class="uk.bl.wap.modules.extractor.ExtractorJson">
   </bean>
-  <!--bean id="extractorMq" class="uk.bl.wap.modules.extractor.AsynchronousMQExtractor">
-    <property name="host" value="rabbitmq"/>
-    <property name="routingKey" value="phantomjs"/>
-    <property name="queue" value="phantomjs"/>
-    <property name="durable" value="true"/>
-    <property name="outputPath" value="REPLACE_HERITRIX_JOBS/dc0-20150827/action/"/>
-  </bean-->
   <bean id="extractorMq" class="org.archive.modules.AMQPPublishProcessor">
-    <property name="clientId" value="ukwa-test-crawl"/>
-    <property name="routingKey" value="to-webrender"/>
+    <property name="clientId" value="FC-050-uris-to-crawl"/>
+    <property name="routingKey" value="FC-030-uris-to-render"/>
     <property name="exchange" value="heritrix"/>
     <property name="amqpUri" value="amqp://guest:guest@rabbitmq:5672/%2f"/>
     <property name="shouldProcessRule">
@@ -345,12 +340,14 @@ metadata.description=UK Legal Deposit Test Crawl.
                 <list>
                     <!-- Begin by REJECTing all... -->
                     <bean class="org.archive.modules.deciderules.RejectDecideRule"/>
-                    <!-- ...then ACCEPT those with viral annotations... -->
+                    <!-- ...then ACCEPT seeds... -->
                     <bean class="org.archive.modules.deciderules.SeedAcceptDecideRule"/>
+                    <!-- ...then ACCEPT host homepages... -->
                     <bean class="org.archive.modules.deciderules.MatchesRegexDecideRule">
                         <property name="regex" value="^https?://[^/]+/$"/>
                         <property name="decision" value="ACCEPT"/>
                     </bean>
+                    <!-- ...then ACCEPT those with viral annotations... -->
                     <bean class="org.archive.modules.deciderules.ExpressionDecideRule">
                         <property name="decision" value="REJECT"/>
                         <property name="groovyExpression" value="(curi.getFetchStatus() &lt; 200 || curi.getFetchStatus() &gt;= 300)"/>
@@ -363,7 +360,7 @@ metadata.description=UK Legal Deposit Test Crawl.
   <bean class="org.archive.crawler.frontier.AMQPUrlReceiver">
     <property name="amqpUri" value="amqp://guest:guest@rabbitmq:5672/%2f"/>
     <property name="exchange" value="heritrix"/>
-    <property name="queueName" value="ukwa-test-crawl"/>
+    <property name="queueName" value="FC-050-uris-to-crawl"/>
     <property name="durable" value="true"/>
     <property name="autoDelete" value="false"/>
   </bean>
@@ -516,13 +513,44 @@ metadata.description=UK Legal Deposit Test Crawl.
   </bean>
   <!-- This provides a crawl log feed to a queue - note that you'll need to set up a binding that matches these parameters to a queue -->
   <bean id="crawlLogFeed" class="uk.bl.wap.crawler.processor.AMQPIndexableCrawlLogFeed">
-    <property name="routingKey" value="crawl-log-feed"/>
+    <property name="routingKey" value="FC-060-uris-to-index"/>
     <property name="exchange" value="heritrix"/>
     <property name="amqpUri" value="amqp://guest:guest@rabbitmq:5672/%2f"/>
     <property name="extraFields">
         <map>
           <entry key="jobName" value="#{metadata.jobName}"/>
         </map>
+    </property>
+  </bean>
+  <!-- This spots documents (e.g. PDFs) in the crawl log feed and posts them to a dedicated queue. -->
+  <bean id="crawlLogDocumentFeed" class="uk.bl.wap.crawler.processor.AMQPIndexableCrawlLogFeed">
+    <property name="routingKey" value="FC-070-documents-to-catalogue"/>
+    <property name="exchange" value="heritrix"/>
+    <property name="amqpUri" value="amqp://guest:guest@rabbitmq:5672/%2f"/>
+    <property name="extraFields">
+        <map>
+          <entry key="jobName" value="#{metadata.jobName}"/>
+        </map>
+    </property>
+    <property name="shouldProcessRule">
+        <bean class="org.archive.modules.deciderules.DecideRuleSequence">
+            <property name="rules">
+                <list>
+                    <!-- Begin by REJECTing all... -->
+                    <bean class="org.archive.modules.deciderules.RejectDecideRule"/>
+                    <!-- ...ACCEPT all PDFs... -->
+                    <bean class="org.archive.modules.deciderules.ContentTypeMatchesRegexDecideRule">
+                        <property name="decision" value="ACCEPT" />
+                        <property name="regex" value="^application/pdf.*">
+                    </bean>
+                    <!-- ...But REJECT if the 'source' field is empty, as we use the source tag to track Watched Targets... -->
+                    <bean class="org.archive.modules.deciderules.ExpressionDecideRule">
+                        <property name="decision" value="REJECT"/>
+                        <property name="groovyExpression" value="(curi.getSourceTag() == null || curi.getSourceTag().trim().length() == 0)"/>
+                    </bean>
+                </list>
+            </property>
+        </bean>
     </property>
   </bean>
   <bean id="candidates" class="org.archive.crawler.postprocessor.CandidatesProcessor">
@@ -550,6 +578,8 @@ metadata.description=UK Legal Deposit Test Crawl.
         <ref bean="persistStoreProcessor"/>
 <!-- send the crawl log to a queue for downstream checks -->
         <ref bean="crawlLogFeed"/>
+<!-- send any discovered documents to a separate feed -->
+        <ref bean="crawlLogDocumentFeed"/>
 <!-- ...send each outlink candidate URI to CandidateChain, 
          and enqueue those ACCEPTed to the frontier... -->
         <ref bean="candidates"/>
@@ -613,7 +643,7 @@ metadata.description=UK Legal Deposit Test Crawl.
     </property>
  </bean>
 <!--
-   EXAMPLE SETTINGS OVERLAY SHEETS
+   OVERLAY SHEETS
    Sheets allow some settings to vary by context - usually by URI context,
    so that different sites or sections of sites can be treated differently. 
    Here are some example Sheets for common purposes. The SheetOverlaysManager
@@ -647,7 +677,8 @@ metadata.description=UK Legal Deposit Test Crawl.
           <value>noForms</value>
         </list>
       </property>
-    </bean><bean class="org.archive.crawler.spring.SurtPrefixesSheetAssociation">
+    </bean>
+    <bean class="org.archive.crawler.spring.SurtPrefixesSheetAssociation">
       <property name="surtPrefixes">
         <list>
           <value>http://(uk,co,carbonmenswear,</value>
@@ -658,7 +689,8 @@ metadata.description=UK Legal Deposit Test Crawl.
           <value>extraPolite</value>
         </list>
       </property>
-    </bean><bean class="org.archive.crawler.spring.SurtPrefixesSheetAssociation">
+    </bean>
+    <bean class="org.archive.crawler.spring.SurtPrefixesSheetAssociation">
       <property name="surtPrefixes">
         <list>
           <value>http://(uk,org,geograph,</value>
@@ -669,7 +701,8 @@ metadata.description=UK Legal Deposit Test Crawl.
           <value>crawlLimited</value>
         </list>
       </property>
-    </bean><bean class="org.archive.crawler.spring.SurtPrefixesSheetAssociation">
+    </bean>
+    <bean class="org.archive.crawler.spring.SurtPrefixesSheetAssociation">
       <property name="surtPrefixes">
         <list>
           <value>http://(uk,co,bbc,</value>
@@ -686,7 +719,8 @@ metadata.description=UK Legal Deposit Test Crawl.
           <value>noLimit</value>
         </list>
       </property>
-    </bean><bean class="org.archive.crawler.spring.SurtPrefixesSheetAssociation">
+    </bean>
+    <bean class="org.archive.crawler.spring.SurtPrefixesSheetAssociation">
       <property name="surtPrefixes">
         <list>
           <value>http://(uk,org,haroldstreet,</value>
@@ -697,7 +731,8 @@ metadata.description=UK Legal Deposit Test Crawl.
           <value>noCookies</value>
         </list>
       </property>
-    </bean><bean class="org.archive.crawler.spring.SurtPrefixesSheetAssociation">
+    </bean>
+    <bean class="org.archive.crawler.spring.SurtPrefixesSheetAssociation">
       <property name="surtPrefixes">
         <list>
           <value>http://(uk,gov,nationalarchives,webarchive,</value>
@@ -715,7 +750,8 @@ metadata.description=UK Legal Deposit Test Crawl.
           <value>blockAll</value>
         </list>
       </property>
-    </bean><bean class="org.archive.crawler.spring.SurtPrefixesSheetAssociation">
+    </bean>
+    <bean class="org.archive.crawler.spring.SurtPrefixesSheetAssociation">
       <property name="surtPrefixes">
         <list>
           <value>http://(uk,gov,nationalarchives,</value>
@@ -726,7 +762,8 @@ metadata.description=UK Legal Deposit Test Crawl.
           <value>ignoreRobots</value>
         </list>
       </property>
-    </bean><bean id="parkedDomains" class="org.archive.crawler.spring.DecideRuledSheetAssociation">
+    </bean>
+    <bean id="parkedDomains" class="org.archive.crawler.spring.DecideRuledSheetAssociation">
       <property name="rules">
         <bean class="org.archive.modules.deciderules.IpAddressSetDecideRule">
           <property name="ipAddresses">
@@ -743,7 +780,8 @@ metadata.description=UK Legal Deposit Test Crawl.
           <value>crawlLimited</value>
         </list>
       </property>
-    </bean><bean id="ipPolite" class="org.archive.crawler.spring.DecideRuledSheetAssociation">
+    </bean>
+    <bean id="ipPolite" class="org.archive.crawler.spring.DecideRuledSheetAssociation">
       <property name="rules">
         <bean class="org.archive.modules.deciderules.IpAddressSetDecideRule">
           <property name="ipAddresses">
@@ -772,7 +810,8 @@ metadata.description=UK Legal Deposit Test Crawl.
           <value>extraPolite</value>
         </list>
       </property>
-    </bean><bean class="org.archive.crawler.spring.DecideRuledSheetAssociation">
+    </bean>
+    <bean class="org.archive.crawler.spring.DecideRuledSheetAssociation">
       <property name="rules">
         <bean class="org.archive.modules.deciderules.DecideRuleSequence">
           <property name="rules">
@@ -791,7 +830,8 @@ metadata.description=UK Legal Deposit Test Crawl.
           <value>ignoreRobots</value>
         </list>
       </property>
-    </bean><bean class="org.archive.crawler.spring.SurtPrefixesSheetAssociation">
+    </bean>
+    <bean class="org.archive.crawler.spring.SurtPrefixesSheetAssociation">
       <property name="surtPrefixes">
         <list>
           <value>http://(uk,gov,www,</value>
@@ -802,7 +842,8 @@ metadata.description=UK Legal Deposit Test Crawl.
           <value>noMaxHops</value>
         </list>
       </property>
-    </bean><bean class="org.archive.crawler.spring.SurtPrefixesSheetAssociation">
+    </bean>
+    <bean class="org.archive.crawler.spring.SurtPrefixesSheetAssociation">
       <property name="surtPrefixes">
         <list>
           <value>http://(uk,co,googlelawsuit,</value>
@@ -813,19 +854,22 @@ metadata.description=UK Legal Deposit Test Crawl.
           <value>noJavascriptExtraction</value>
         </list>
       </property>
-    </bean><bean id="noMaxHops" class="org.archive.spring.Sheet">
+    </bean>
+    <bean id="noMaxHops" class="org.archive.spring.Sheet">
       <property name="map">
         <map>
           <entry key="hopsCountReject.enabled" value="false"/>
         </map>
       </property>
-    </bean><bean id="ignoreRobots" class="org.archive.spring.Sheet">
+    </bean>
+    <bean id="ignoreRobots" class="org.archive.spring.Sheet">
       <property name="map">
         <map>
           <entry key="preconditions.calculateRobotsOnly" value="true"/>
         </map>
       </property>
-    </bean><bean id="noLimit" class="org.archive.spring.Sheet">
+    </bean>
+    <bean id="noLimit" class="org.archive.spring.Sheet">
       <property name="map">
         <map>
           <entry key="fetchHttp.maxLengthBytes" value="0"/>
@@ -833,21 +877,24 @@ metadata.description=UK Legal Deposit Test Crawl.
           <entry key="metadata.robotsPolicyName" value="ignore"/>
         </map>
       </property>
-    </bean><bean id="higherLimit" class="org.archive.spring.Sheet">
+    </bean>
+    <bean id="higherLimit" class="org.archive.spring.Sheet">
       <property name="map">
         <map>
           <entry key="quotaEnforcer.serverMaxSuccessKb" value="2097152"/>
           <entry key="metadata.robotsPolicyName" value="ignore"/>
         </map>
       </property>
-    </bean><bean id="noForms" class="org.archive.spring.Sheet">
+    </bean>
+    <bean id="noForms" class="org.archive.spring.Sheet">
       <property name="map">
         <map>
           <entry key="extractorHtml.ignoreFormActionUrls" value="true"/>
           <entry key="extractorHtml.extractValueAttributes" value="false"/>
         </map>
       </property>
-    </bean><bean id="extraPolite" class="org.archive.spring.Sheet">
+    </bean>
+    <bean id="extraPolite" class="org.archive.spring.Sheet">
       <property name="map">
         <map>
           <entry key="disposition.delayFactor" value="8.0"/>
@@ -856,46 +903,53 @@ metadata.description=UK Legal Deposit Test Crawl.
           <entry key="disposition.respectCrawlDelayUpToSeconds" value="60"/>
         </map>
       </property>
-    </bean><bean id="crawlLimited" class="org.archive.spring.Sheet">
+    </bean>
+    <bean id="crawlLimited" class="org.archive.spring.Sheet">
       <property name="map">
         <map>
           <entry key="frontier.queueTotalBudget" value="25"/>
           <entry key="quotaEnforcer.serverMaxFetchResponses" value="25"/>
         </map>
       </property>
-    </bean><bean id="noCookies" class="org.archive.spring.Sheet">
+    </bean>
+    <bean id="noCookies" class="org.archive.spring.Sheet">
       <property name="map">
         <map>
           <entry key="fetchHttp.ignoreCookies" value="true"/>
         </map>
       </property>
-    </bean><bean id="blockAll" class="org.archive.spring.Sheet">
+    </bean>
+    <bean id="blockAll" class="org.archive.spring.Sheet">
       <property name="map">
         <map>
           <entry key="preselector.blockAll" value="true"/>
         </map>
       </property>
-    </bean><bean id="noJavascriptExtraction" class="org.archive.spring.Sheet">
+    </bean>
+    <bean id="noJavascriptExtraction" class="org.archive.spring.Sheet">
             <property name="map">
                 <map>
                     <entry key="extractorJs.enabled" value="false"/>
                     <entry key="extractorHtml.extractJavascript" value="false"/>
                 </map>
             </property>
-        </bean><bean id="resourceScope" class="org.archive.spring.Sheet">
+        </bean>
+    <bean id="resourceScope" class="org.archive.spring.Sheet">
       <property name="map">
         <map>
           <entry key="hopsCountReject.maxHops" value="1"/>
         </map>
       </property>
-    </bean><bean id="plus1Scope" class="org.archive.spring.Sheet">
+    </bean>
+    <bean id="plus1Scope" class="org.archive.spring.Sheet">
       <property name="map">
         <map>
           <entry key="hopsCountReject.maxHops" value="1"/>
           <entry key="redirectAccept.enabled" value="true"/>
         </map>
       </property>
-    </bean><bean id="subdomainsScope" class="org.archive.spring.Sheet">
+    </bean>
+    <bean id="subdomainsScope" class="org.archive.spring.Sheet">
       <property name="map">
         <map>
           <entry key="onDomainAccept.enabled" value="true"/>
@@ -925,6 +979,12 @@ metadata.description=UK Legal Deposit Test Crawl.
     <property name="checkpointIntervalMinutes" value="720"/> <!-- i.e. every 12 hours -->
 <!-- <property name="checkpointsDir" value="checkpoints"/> -->
 <!-- <property name="forgetAllButLatest" value="false"/> -->
+  </bean>
+<!-- CHECKPOINTSUCCESSEVENTS: this bean listens for successful checkpoints and sends a message to AMQP whenever one occurs. -->
+  <bean id="checkpointEventMessageSender" class="uk.bl.wap.util.AMQPCheckpointSuccessMessageProducer">
+    <property name="routingKey" value="checkpoint-events"/>
+    <property name="exchange" value="heritrix"/>
+    <property name="amqpUri" value="amqp://guest:guest@rabbitmq:5672/%2f"/>
   </bean>
 <!-- 
    OPTIONAL BEANS
@@ -1033,7 +1093,7 @@ metadata.description=UK Legal Deposit Test Crawl.
 <!-- <property name="uriErrorsLogPath" value="uri-errors.log" /> -->
 <!-- <property name="runtimeErrorsLogPath" value="runtime-errors.log" /> -->
 <!-- <property name="nonfatalErrorsLogPath" value="nonfatal-errors.log" /> -->
-<!-- <property name="logExtraInfo" value="false" /> -->
+    <property name="logExtraInfo" value="true" />
   </bean>
 <!-- SHEETOVERLAYMANAGER: manager of sheets of contextual overlays
       Autowired to include any SheetForSurtPrefix or 
