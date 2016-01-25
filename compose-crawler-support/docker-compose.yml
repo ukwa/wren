@@ -1,0 +1,108 @@
+# Data Volume Container
+# - This is the recommended way to share a data volume between containers.
+dvc:
+  image: busybox
+  volumes:
+    - ./output:/heritrix/output
+    - ./state:/heritrix/state
+
+# A redis instance to act as the "already-seen URI" cache
+redis:
+  image: redis:3.0
+  command: "redis-server --appendonly yes"
+  ports:
+    - "6379:6379"
+  volumes:
+    - ./redis/:/data
+
+# Clamd virus scanning Service
+clamd:
+  image: ukwa/clamd
+  ports:
+    - "3310:3310"
+
+# RabbitMQ
+rabbitmq:
+  image: rabbitmq:3.5-management
+  ports:
+    - "15672:15672"  # management port (guest:guest)
+    - "5672:5672"   # amqp port
+    - "25672:25672" # cluster port
+  log_driver: none
+
+# PhantomJS web page rendering service
+# TODO pick up proxy from the environment
+webrender:
+  image: ukwa/webrender-phantomjs:master
+  ports:
+    - "8000:8000"
+  links:
+    - openwayback
+
+# HAR Daemon that connects Heritrix to Webrender via RabbitMQ
+har-daemon:
+  image: ukwa/webrender-har-daemon
+  environment:
+    - "AMQP_URL=amqp://guest:guest@rabbitmq:5672/%2f"
+  links:
+    - rabbitmq
+    - webrender
+  volumes_from:
+    - dvc:rw
+
+# HAR Daemon that connects Heritrix to Webrender via RabbitMQ
+#shepherd:
+#  build: ../shepherd
+#  environment:
+#    - "AMQP_URL=amqp://guest:guest@rabbitmq:5672/%2f"
+#    - "QUEUE_NAME=crawl-log-feed"
+#    - "DUMMY_RUN="
+#    - "CDX_SERVER_URL=http://cdxserver:8080/fc"
+#  links:
+#    - rabbitmq
+#    - cdxserver
+#  volumes_from:
+#    - dvc:rw
+
+## Monitrix, built on ELK by extending Logstash to support Heritrix logs.
+monitrix:
+  image: ukwa/monitrix
+  ports:
+    - "5601:5601"
+    - "9200:9200"
+    - "5000:5000"
+    - "5044:5044"
+
+# tinycdxserver
+cdxserver:
+  image: ukwa/tinycdxserver
+  ports:
+    - "9090:8080"
+  volumes:
+    - ./cdx:/data
+
+# OpenWayback, based loosely on UNB Libraries Dockerfile
+openwayback:
+  image: ukwa/openwayback
+  ports:
+    - "8080:8080"
+    - "8090:8090"
+  environment:
+    - "WAYBACK_BASEDIR=/data"
+    - "WAYBACK_URL_HOST=192.168.45.252"
+    - "WAYBACK_URL_PREFIX=http://192.168.45.252:8080"
+    - "CDX_INDEX_SERVER=http://cdxserver:8080/fc"
+  links:
+    - cdxserver
+  volumes_from:
+    - dvc:ro
+
+# For document harvesting:
+pdf2htmlex:
+  image: ukwa/pdf2htmlex
+  ports:
+    - "6000:5000"
+  environment:
+    - "HTTP_PROXY=http://explorer.bl.uk:3127"
+    - "HTTPS_PROXY=http://explorer.bl.uk:3127"
+
