@@ -21,8 +21,8 @@ ukwa-heritrix:
 dvc:
   image: busybox
   volumes:
-    - ./output:/heritrix/output
-    - ./output/images:/images
+    - /heritrix:/heritrix
+#    - ./output:/heritrix/output
 #    - ./state:/heritrix/state
 
 # A redis instance to act as the "already-seen URI" cache
@@ -100,6 +100,8 @@ cdxserver:
 # I don't think this works on dev systems - should be fine in live.
 #  volumes:
 #    - ./cdx:/data
+  volumes:
+    - /heritrix/cdx:/data
 
 # OpenWayback, based loosely on UNB Libraries Dockerfile
 openwayback:
