@@ -61,7 +61,7 @@ metadata.description=UK Legal Deposit Frequent Crawl.
   </bean>
 <!-- GEO-LOOKUP: specifying location of external database. -->
   <bean id="externalGeoLookup" class="uk.bl.wap.modules.deciderules.ExternalGeoLookup">
-    <property name="database" value="/GeoLite2-City.mmdb"/>
+    <property name="database" value="#{ systemEnvironment['GEOLITE2_CITY_MMDB_LOCATION'] ?: '' }/GeoLite2-City.mmdb"/>
   </bean>
 
 <!-- SCOPE: rules for which discovered URIs to crawl; order is very 
@@ -460,7 +460,7 @@ metadata.description=UK Legal Deposit Frequent Crawl.
 <!-- <property name="directory" value="${launchId}" /> -->
     <property name="storePaths">
       <list>
-        <value>/heritrix/output/viral</value>
+        <value>/heritrix/output/viral/#{metadata.jobName}</value>
       </list>
     </property>
 <!-- <property name="template" value="${prefix}-${timestamp17}-${serialno}-${heritrix.pid}~${heritrix.hostname}~${heritrix.port}" /> -->
@@ -501,7 +501,7 @@ metadata.description=UK Legal Deposit Frequent Crawl.
 <!-- <property name="directory" value="${launchId}" /> -->
     <property name="storePaths">
       <list>
-        <value>/heritrix/output/warcs</value>
+        <value>/heritrix/output/warcs/#{metadata.jobName}</value>
       </list>
     </property>
 <!-- <property name="template" value="${prefix}-${timestamp17}-${serialno}-${heritrix.pid}~${heritrix.hostname}~${heritrix.port}" /> -->
@@ -524,7 +524,7 @@ metadata.description=UK Legal Deposit Frequent Crawl.
   </bean>
   <!-- This spots documents (e.g. PDFs) in the crawl log feed and posts them to a dedicated queue. -->
   <bean id="crawlLogDocumentFeed" class="uk.bl.wap.crawler.processor.AMQPIndexableCrawlLogFeed">
-    <property name="routingKey" value="FC-5-documents-to-catalogue"/>
+    <property name="routingKey" value="documents-to-catalogue"/>
     <property name="exchange" value="heritrix"/>
     <property name="amqpUri" value="amqp://guest:guest@rabbitmq:5672/%2f"/>
     <property name="extraFields">
@@ -558,8 +558,8 @@ metadata.description=UK Legal Deposit Frequent Crawl.
 <!-- <property name="processErrorOutlinks" value="false" /> -->
   </bean>
   <bean id="disposition" class="org.archive.crawler.postprocessor.DispositionProcessor">
-<!-- <property name="delayFactor" value="5.0" /> -->
-     <property name="minDelayMs" value="1000"/> 
+     <property name="delayFactor" value="2.0" />
+     <property name="minDelayMs" value="500"/> 
 <!-- <property name="respectCrawlDelayUpToSeconds" value="300" /> -->
 <!-- <property name="maxDelayMs" value="30000" /> -->
 <!-- <property name="maxPerHostBandwidthUsageKbSec" value="0" /> -->
@@ -987,7 +987,7 @@ metadata.description=UK Legal Deposit Frequent Crawl.
 <!-- CHECKPOINTSUCCESSEVENTS: this bean listens for successful checkpoints and sends a message to AMQP whenever one occurs. -->
   <bean id="checkpointEventMessageSender" class="uk.bl.wap.util.AMQPCheckpointSuccessMessageProducer">
     <property name="routingKey" value="checkpoints-to-package"/>
-    <property name="exchange" value="heritrix"/>
+    <property name="exchange" value="post-crawl"/>
     <property name="amqpUri" value="amqp://guest:guest@rabbitmq:5672/%2f"/>
   </bean>
 <!-- 
@@ -1097,7 +1097,7 @@ metadata.description=UK Legal Deposit Frequent Crawl.
 <!-- <property name="uriErrorsLogPath" value="uri-errors.log" /> -->
 <!-- <property name="runtimeErrorsLogPath" value="runtime-errors.log" /> -->
 <!-- <property name="nonfatalErrorsLogPath" value="nonfatal-errors.log" /> -->
-<!-- <property name="logExtraInfo" value="false" /> -->
+    <property name="logExtraInfo" value="true" />
   </bean>
 <!-- SHEETOVERLAYMANAGER: manager of sheets of contextual overlays
       Autowired to include any SheetForSurtPrefix or 

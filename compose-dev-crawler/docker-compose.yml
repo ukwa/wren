@@ -23,7 +23,8 @@ dvc:
   volumes:
     - ./output:/heritrix/output
     - ./images:/images
-    - ./state:/heritrix/state
+# Hard links seem to have issues when using mapped state, but likely only on docker-machine on OS X:
+#    - ./state:/heritrix/state
 
 # Clamd virus scanning Service
 clamd:
@@ -38,7 +39,7 @@ rabbitmq:
     - "15672:15672"  # management port (guest:guest)
     - "5672:5672"   # amqp port
     - "25672:25672" # cluster port
-#  log_driver: none
+  log_driver: none
 
 # PhantomJS web page rendering service
 # TODO pick up proxy from the environment

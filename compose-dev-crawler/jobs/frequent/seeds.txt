@@ -1,0 +1,9 @@
+
+# Heritrix added seed redirect from http://acid.matkelly.com/.
+http://acid.matkelly.com/
+# Heritrix added seed redirect from http://acid.matkelly.com/.
+http://acid.matkelly.com/
+# Heritrix added seed redirect from http://acid.matkelly.com/.
+http://acid.matkelly.com/
+# Heritrix added seed redirect from http://acid.matkelly.com/.
+http://acid.matkelly.com/
