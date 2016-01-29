@@ -29,7 +29,7 @@
 
 metadata.operatorContactUrl=http://www.bl.uk/aboutus/legaldeposit/websites/websites/faqswebmaster/index.html
 metadata.jobName=frequent
-metadata.description=UK Legal Deposit Frequent Crawl.
+metadata.description=UK Legal Deposit Regular Crawl
 
 ##..more?..##
    </value>
@@ -60,9 +60,11 @@ metadata.description=UK Legal Deposit Frequent Crawl.
     <property name="blockAwaitingSeedLines" value="-1"/>
   </bean>
 <!-- GEO-LOOKUP: specifying location of external database. -->
+<!--
   <bean id="externalGeoLookup" class="uk.bl.wap.modules.deciderules.ExternalGeoLookup">
     <property name="database" value="#{ systemEnvironment['GEOLITE2_CITY_MMDB_LOCATION'] ?: '' }/GeoLite2-City.mmdb"/>
   </bean>
+-->
 
 <!-- SCOPE: rules for which discovered URIs to crawl; order is very 
       important because last decision returned other than 'NONE' wins. -->
@@ -146,7 +148,7 @@ metadata.description=UK Legal Deposit Frequent Crawl.
   </bean>
 <!-- ...but REJECT those more than a configured link-hop-count from start... -->
   <bean id="hopsCountReject" class="org.archive.modules.deciderules.TooManyHopsDecideRule">
-    <property name="maxHops" value="3"/>
+    <property name="maxHops" value="30"/>
   </bean>
 <!-- ...and REJECT those from a configurable (initially empty) set of URI regexes... -->
   <bean id="listRegexFilterOut" class="org.archive.modules.deciderules.MatchesListRegexDecideRule">
