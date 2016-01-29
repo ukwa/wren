@@ -1024,10 +1024,10 @@ metadata.description=UK Legal Deposit Regular Crawl
  -->
 <!-- URI PRECEDENCE POLICY -->
 <!--
- <bean id="uriPrecedencePolicy" 
-   class="org.archive.crawler.frontier.precedence.CostUriPrecedencePolicy">
- </bean>
  -->
+ <bean id="uriPrecedencePolicy" 
+   class="org.archive.crawler.frontier.precedence.HopsUriPrecedencePolicy">
+ </bean>
 <!-- COST ASSIGNMENT POLICY -->
  <bean id="costAssignmentPolicy" 
    class="org.archive.crawler.frontier.UnitCostAssignmentPolicy">
