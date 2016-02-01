@@ -91,6 +91,12 @@ openwayback:
   volumes_from:
     - dvc:ro
 
+# Apache Tika, for text and metadata extraction:
+tika:
+  image: logicalspark/docker-tikaserver
+  ports: 
+    - "9998:9998"
+
 ## W3ACT (build in place and run)
 #w3act:
 #  build: ../w3act
