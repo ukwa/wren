@@ -57,7 +57,7 @@ shepherd:
     - "AMQP_URL=amqp://guest:guest@rabbitmq:5672/%2f"
     - "QUEUE_NAME=FC-4-uris-to-index"
     - "CDXSERVER_URL=http://cdxserver:8080/fc"
-    - "W3ACT_URL=http://192.169.1.13:9000/act/"
+    - "W3ACT_URL=http://192.168.99.1:9000/act/"
     - "W3ACT_USER=wa-sysadm@bl.uk"
     - "W3ACT_PW=sysAdmin"
   links:
