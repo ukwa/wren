@@ -13,6 +13,8 @@ RUN \
 
 ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
+ADD setup-testrun.sh /
+
 EXPOSE 8000 8001
 
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
