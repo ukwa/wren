@@ -60,6 +60,7 @@ shepherd:
     - "W3ACT_URL=http://192.168.99.1:9000/act/"
     - "W3ACT_USER=wa-sysadm@bl.uk"
     - "W3ACT_PW=sysAdmin"
+    - "WAYBACK_URL=http://${DOCKER_HOSTNAME}:8080/wayback"
   links:
     - rabbitmq
     - cdxserver
