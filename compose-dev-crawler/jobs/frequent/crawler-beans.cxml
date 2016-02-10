@@ -69,18 +69,19 @@ metadata.description=UK Legal Deposit Regular Crawl
 <!-- SCOPE: rules for which discovered URIs to crawl; order is very 
       important because last decision returned other than 'NONE' wins. -->
   <bean id="scope" class="org.archive.modules.deciderules.DecideRuleSequence">
-    <property name="logToFile" value="true"/><!-- This may be incompatible with having the launchId in the logger path because there's no launchID when this gets initialised. Race condition? -->
+    <property name="logToFile" value="false"/><!-- This may be incompatible with having the launchId in the logger path because there's no launchID when this gets initialised. Race condition? -->
     <property name="rules">
       <list>
 <!-- Begin by REJECTing all... -->
         <bean class="org.archive.modules.deciderules.RejectDecideRule">
         </bean>
-<!-- ...then ACCEPT those with +uk SURT prefixes... -->
-        <bean class="org.archive.modules.deciderules.surt.SurtPrefixedDecideRule">
+<!-- ...then ACCEPT those with the given URL/SURT prefixes... -->
+        <bean class="uk.bl.wap.modules.deciderules.WatchedFileSurtPrefixedDecideRule">
           <property name="seedsAsSurtPrefixes" value="true"/>
           <property name="alsoCheckVia" value="false"/>
           <property name="surtsSourceFile" value="surts.txt"/>
           <property name="surtsDumpFile" value="surts.dump"/>
+          <property name="sourceCheckInterval" value="300"/>
         </bean>
 <!-- ...and ACCEPT associated/helper files... -->
         <bean class="org.archive.modules.deciderules.MatchesRegexDecideRule">
@@ -365,6 +366,7 @@ metadata.description=UK Legal Deposit Regular Crawl
     <property name="queueName" value="FC-3-uris-to-crawl"/>
     <property name="durable" value="true"/>
     <property name="autoDelete" value="false"/>
+    <property name="prefetchCount" value="1000"/>
   </bean>
   <bean id="viralContent" class="uk.bl.wap.crawler.processor.ViralContentProcessor">
     <property name="clamdHost" value="clamd"/>
@@ -540,15 +542,18 @@ metadata.description=UK Legal Deposit Regular Crawl
                 <list>
                     <!-- Begin by REJECTing all... -->
                     <bean class="org.archive.modules.deciderules.RejectDecideRule"/>
-                    <!-- ...ACCEPT all PDFs... -->
-                    <bean class="org.archive.modules.deciderules.ContentTypeMatchesRegexDecideRule">
-                        <property name="decision" value="ACCEPT" />
+                    <!-- ...ACCEPT if on or via a WatchedTarget... -->
+                    <bean class="uk.bl.wap.modules.deciderules.WatchedFileSurtPrefixedDecideRule">
+                      <property name="seedsAsSurtPrefixes" value="true"/>
+                      <property name="alsoCheckVia" value="true"/>
+                      <property name="surtsSourceFile" value="watched-surts.txt"/>
+                      <property name="surtsDumpFile" value="watched-surts.dump"/>
+                      <property name="sourceCheckInterval" value="300"/>
+                    </bean>                    
+                    <!-- ...REJECT if NOT PDFs... -->
+                    <bean class="org.archive.modules.deciderules.ContentTypeNotMatchesRegexDecideRule">
+                        <property name="decision" value="REJECT" />
                         <property name="regex" value="^application/pdf.*"/>
-                    </bean>
-                    <!-- ...But REJECT if the 'source' field is empty, as we use the source tag to track Watched Targets... -->
-                    <bean class="org.archive.modules.deciderules.ExpressionDecideRule">
-                        <property name="decision" value="REJECT"/>
-                        <property name="groovyExpression" value="(curi.getSourceTag() == null || curi.getSourceTag().trim().length() == 0)"/>
                     </bean>
                 </list>
             </property>
@@ -594,7 +599,7 @@ metadata.description=UK Legal Deposit Regular Crawl
 <!-- CRAWLCONTROLLER: Control interface, unifying context -->
   <bean id="crawlController" class="org.archive.crawler.framework.CrawlController">
     <property name="maxToeThreads" value="500"/>
-    <property name="pauseAtStart" value="false" />
+    <property name="pauseAtStart" value="true" />
     <property name="runWhileEmpty" value="true"/>
 <!-- <property name="recorderInBufferBytes" value="524288" /> -->
 <!-- <property name="recorderOutBufferBytes" value="16384" /> -->
@@ -644,9 +649,7 @@ metadata.description=UK Legal Deposit Regular Crawl
       </bean>
     </property>
     <!-- rescan the file for changes every 5 minutes (300 seconds) -->
-  <!--
     <property name="sourceCheckInterval" value="300"/>
-  -->
  </bean>
 <!--
    OVERLAY SHEETS

@@ -61,6 +61,7 @@ shepherd:
     - "W3ACT_USER=wa-sysadm@bl.uk"
     - "W3ACT_PW=sysAdmin"
     - "WAYBACK_URL=http://${DOCKER_HOSTNAME}:8080/wayback"
+    - "PYTHONUNBUFFERED=TRUE"
   links:
     - rabbitmq
     - cdxserver
@@ -97,7 +98,8 @@ openwayback:
 
 # PDF to HTML service
 pdf2htmlex:
-  image: ukwa/pdf2htmlex
+#  image: ukwa/pdf2htmlex
+  build: ../pdf2htmlex
   ports:
     - "5000:5000"
 
