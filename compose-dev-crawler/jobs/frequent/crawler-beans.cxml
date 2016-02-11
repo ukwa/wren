@@ -334,7 +334,7 @@ metadata.description=UK Legal Deposit Regular Crawl
   <bean id="extractorMq" class="org.archive.modules.AMQPPublishProcessor">
     <property name="routingKey" value="uris-to-render"/>
     <property name="exchange" value="heritrix"/>
-    <property name="amqpUri" value="amqp://guest:guest@rabbitmq:5672/%2f"/>
+    <property name="amqpUri" value="amqp://guest:guest@amqp.ddb.wa.bl.uk:5672/%2f"/>
     <property name="clientId" value="FC-3-uris-to-crawl"/>
     <property name="shouldProcessRule">
         <bean class="org.archive.modules.deciderules.DecideRuleSequence">
@@ -360,7 +360,7 @@ metadata.description=UK Legal Deposit Regular Crawl
     </property>
   </bean>
   <bean class="org.archive.crawler.frontier.AMQPUrlReceiver">
-    <property name="amqpUri" value="amqp://guest:guest@rabbitmq:5672/%2f"/>
+    <property name="amqpUri" value="amqp://guest:guest@amqp.ddb.wa.bl.uk:5672/%2f"/>
     <property name="exchange" value="heritrix"/>
     <property name="queueName" value="FC-3-uris-to-crawl"/>
     <property name="durable" value="true"/>
@@ -517,7 +517,7 @@ metadata.description=UK Legal Deposit Regular Crawl
   <bean id="crawlLogFeed" class="uk.bl.wap.crawler.processor.AMQPIndexableCrawlLogFeed">
     <property name="routingKey" value="uris-to-index"/>
     <property name="exchange" value="heritrix"/>
-    <property name="amqpUri" value="amqp://guest:guest@rabbitmq:5672/%2f"/>
+    <property name="amqpUri" value="amqp://guest:guest@amqp.ddb.wa.bl.uk:5672/%2f"/>
     <property name="extraFields">
         <map>
           <entry key="jobName" value="#{metadata.jobName}"/>
@@ -528,7 +528,7 @@ metadata.description=UK Legal Deposit Regular Crawl
   <bean id="crawlLogDocumentFeed" class="uk.bl.wap.crawler.processor.AMQPIndexableCrawlLogFeed">
     <property name="routingKey" value="documents-to-catalogue"/>
     <property name="exchange" value="heritrix"/>
-    <property name="amqpUri" value="amqp://guest:guest@rabbitmq:5672/%2f"/>
+    <property name="amqpUri" value="amqp://guest:guest@amqp.ddb.wa.bl.uk:5672/%2f"/>
     <property name="extraFields">
         <map>
           <entry key="jobName" value="#{metadata.jobName}"/>
@@ -594,11 +594,11 @@ metadata.description=UK Legal Deposit Regular Crawl
 <!-- CRAWLCONTROLLER: Control interface, unifying context -->
   <bean id="crawlController" class="org.archive.crawler.framework.CrawlController">
     <property name="maxToeThreads" value="500"/>
-    <property name="pauseAtStart" value="false" />
+    <property name="pauseAtStart" value="true" />
     <property name="runWhileEmpty" value="true"/>
 <!-- <property name="recorderInBufferBytes" value="524288" /> -->
 <!-- <property name="recorderOutBufferBytes" value="16384" /> -->
-    <property name="scratchDir" value="/scratch"/>
+    <property name="scratchDir" value="/scratch/heritrix"/>
   </bean>
 <!-- FRONTIER: Record of all URIs discovered and queued-for-collection -->
   <bean id="frontier" class="org.archive.crawler.frontier.BdbFrontier">
@@ -990,7 +990,7 @@ metadata.description=UK Legal Deposit Regular Crawl
   <bean id="checkpointEventMessageSender" class="uk.bl.wap.util.AMQPCheckpointSuccessMessageProducer">
     <property name="routingKey" value="checkpoints-to-package"/>
     <property name="exchange" value="post-crawl"/>
-    <property name="amqpUri" value="amqp://guest:guest@rabbitmq:5672/%2f"/>
+    <property name="amqpUri" value="amqp://guest:guest@amqp.ddb.wa.bl.uk:5672/%2f"/>
   </bean>
 <!-- 
    OPTIONAL BEANS
@@ -1046,7 +1046,7 @@ metadata.description=UK Legal Deposit Regular Crawl
    <property name="monitorPaths">
      <list>
        <value>/heritrix/output</value>
-       <value>/heritrix/scratch</value>
+       <value>/scratch/heritrix</value>
        <value>/heritrix/state</value>
      </list>
    </property>
