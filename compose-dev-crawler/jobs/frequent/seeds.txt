@@ -1,23 +1,11 @@
 
-# Heritrix added seed redirect from http://acid.matkelly.com/.
-http://acid.matkelly.com/
-# Heritrix added seed redirect from http://acid.matkelly.com/.
-http://acid.matkelly.com/
-# Heritrix added seed redirect from http://acid.matkelly.com/.
-http://acid.matkelly.com/
-# Heritrix added seed redirect from http://acid.matkelly.com/.
-http://acid.matkelly.com/
-# Heritrix added seed redirect from http://acid.matkelly.com/.
-http://acid.matkelly.com/
-# Heritrix added seed redirect from http://acid.matkelly.com/.
-http://acid.matkelly.com/
-# Heritrix added seed redirect from http://acid.matkelly.com/.
-http://acid.matkelly.com/
-# Heritrix added seed redirect from http://anjackson.net/.
-http://anjackson.net/
-# Heritrix added seed redirect from http://anjackson.net/.
-http://anjackson.net/
-# Heritrix added seed redirect from http://anjackson.net/.
-http://anjackson.net/
-# Heritrix added seed redirect from http://anjackson.net/.
-http://anjackson.net/
+# Heritrix added seed redirect from https://www.gov.uk/government/publications.
+https://www.gov.uk/government/publications
+# Heritrix added seed redirect from https://www.gov.uk/government/publications.
+https://www.gov.uk/government/publications
+# Heritrix added seed redirect from https://www.gov.uk/government/publications?departments[]=department-for-transport.
+https://www.gov.uk/government/publications?departments[]=department-for-transport
+# Heritrix added seed redirect from https://www.gov.uk/government/publications?departments[]=department-for-transport.
+https://www.gov.uk/government/publications?departments[]=department-for-transport
+# Heritrix added seed redirect from https://www.gov.uk/government/publications?departments[]=department-for-transport.
+https://www.gov.uk/government/publications?departments[]=department-for-transport

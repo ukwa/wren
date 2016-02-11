@@ -57,6 +57,11 @@ shepherd:
     - "AMQP_URL=amqp://guest:guest@rabbitmq:5672/%2f"
     - "QUEUE_NAME=FC-4-uris-to-index"
     - "CDXSERVER_URL=http://cdxserver:8080/fc"
+    - "W3ACT_URL=http://192.168.99.1:9000/act/"
+    - "W3ACT_USER=wa-sysadm@bl.uk"
+    - "W3ACT_PW=sysAdmin"
+    - "WAYBACK_URL=http://${DOCKER_HOSTNAME}:8080/wayback"
+    - "PYTHONUNBUFFERED=TRUE"
   links:
     - rabbitmq
     - cdxserver
@@ -91,11 +96,18 @@ openwayback:
   volumes_from:
     - dvc:ro
 
+# PDF to HTML service
+pdf2htmlex:
+#  image: ukwa/pdf2htmlex
+  build: ../pdf2htmlex
+  ports:
+    - "5000:5000"
+
 # Apache Tika, for text and metadata extraction:
-tika:
-  image: logicalspark/docker-tikaserver
-  ports: 
-    - "9998:9998"
+#tika:
+#  image: logicalspark/docker-tikaserver
+#  ports: 
+#    - "9998:9998"
 
 ## W3ACT (build in place and run)
 #w3act:
