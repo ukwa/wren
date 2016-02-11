@@ -366,7 +366,9 @@ metadata.description=UK Legal Deposit Regular Crawl
     <property name="queueName" value="FC-3-uris-to-crawl"/>
     <property name="durable" value="true"/>
     <property name="autoDelete" value="false"/>
+    <!--
     <property name="prefetchCount" value="1000"/>
+    -->
   </bean>
   <bean id="viralContent" class="uk.bl.wap.crawler.processor.ViralContentProcessor">
     <property name="clamdHost" value="clamd"/>
@@ -544,7 +546,7 @@ metadata.description=UK Legal Deposit Regular Crawl
                     <bean class="org.archive.modules.deciderules.RejectDecideRule"/>
                     <!-- ...ACCEPT if on or via a WatchedTarget... -->
                     <bean class="uk.bl.wap.modules.deciderules.WatchedFileSurtPrefixedDecideRule">
-                      <property name="seedsAsSurtPrefixes" value="true"/>
+                      <property name="seedsAsSurtPrefixes" value="false"/>
                       <property name="alsoCheckVia" value="true"/>
                       <property name="surtsSourceFile" value="watched-surts.txt"/>
                       <property name="surtsDumpFile" value="watched-surts.dump"/>
