@@ -11,7 +11,7 @@ ukwa-heritrix:
 #    - "MONITRIX_ENABLED=1"
   links:
     - clamd
-    - rabbitmq
+    - amqp
 #    - monitrix
   volumes_from:
     - dvc:rw
@@ -33,7 +33,7 @@ clamd:
     - "3310:3310"
 
 # RabbitMQ
-rabbitmq:
+amqp:
   image: rabbitmq:3.5-management
   ports:
     - "15672:15672"  # management port (guest:guest)
@@ -54,7 +54,7 @@ webrender:
 shepherd:
   build: ../shepherd
   environment:
-    - "AMQP_URL=amqp://guest:guest@rabbitmq:5672/%2f"
+    - "AMQP_URL=amqp://guest:guest@amqp:5672/%2f"
     - "QUEUE_NAME=FC-4-uris-to-index"
     - "CDXSERVER_URL=http://cdxserver:8080/fc"
     - "W3ACT_URL=http://192.168.99.1:9000/act/"
@@ -63,7 +63,7 @@ shepherd:
     - "WAYBACK_URL=http://${DOCKER_HOSTNAME}:8080/wayback"
     - "PYTHONUNBUFFERED=TRUE"
   links:
-    - rabbitmq
+    - amqp
     - cdxserver
     - webrender
   volumes_from:

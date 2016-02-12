@@ -88,16 +88,17 @@ metadata.description=UK Legal Deposit Regular Crawl
           <property name="alsoCheckVia" value="false"/>
           <property name="surtsSourceFile" value="surts.txt"/>
           <property name="surtsDumpFile" value="surts.dump"/>
-          <property name="sourceCheckInterval" value="300"/>
+          <property name="sourceCheckInterval" value="30"/>
         </bean>
 <!-- ...and ACCEPT associated/helper files... -->
         <bean class="org.archive.modules.deciderules.MatchesRegexDecideRule">
           <property name="regex" value="^https?://[^/]+/.+(?i)(\.(js|css|bmp|gif|jpe?g|[pm]ng|svg|tiff?|ico|web[pm]|aac|aiff?|m3u|m4[av]|midi?|mp[1234acu]|og[agm]|ra?m?|cda|alac|ac3|flac|wav|wm[av]|as[fx]|avi|flv|mov|mpe?g|qt|smil|swf|woff|eot|ttf))\b.*$"/>
           <property name="decision" value="ACCEPT"/>
         </bean>
+        <!-- Always except URIs that appear to be transcluded resources... -->
         <bean class="org.archive.modules.deciderules.HopsPathMatchesRegexDecideRule">
           <property name="decision" value="ACCEPT"/>
-          <property name="regex" value="^[EI]*$"/>
+          <property name="regex" value="^[L]*[ERP]+$"/>
         </bean>
         <!-- This only makes sense in the broad/domain crawl:
 
@@ -156,7 +157,7 @@ metadata.description=UK Legal Deposit Regular Crawl
   </bean>
 <!-- ...but REJECT those more than a configured link-hop-count from start... -->
   <bean id="hopsCountReject" class="org.archive.modules.deciderules.TooManyHopsDecideRule">
-    <property name="maxHops" value="30"/>
+    <property name="maxHops" value="20"/>
   </bean>
 <!-- ...and REJECT those from a configurable (initially empty) set of URI regexes... -->
   <bean id="listRegexFilterOut" class="org.archive.modules.deciderules.MatchesListRegexDecideRule">
@@ -342,7 +343,7 @@ metadata.description=UK Legal Deposit Regular Crawl
   <bean id="extractorMq" class="org.archive.modules.AMQPPublishProcessor">
     <property name="routingKey" value="uris-to-render"/>
     <property name="exchange" value="heritrix"/>
-    <property name="amqpUri" value="amqp://guest:guest@amqp.ddb.wa.bl.uk:5672/%2f"/>
+    <property name="amqpUri" value="amqp://guest:guest@amqp:5672/%2f"/>
     <property name="clientId" value="FC-3-uris-to-crawl"/>
     <property name="shouldProcessRule">
         <bean class="org.archive.modules.deciderules.DecideRuleSequence">
@@ -368,7 +369,7 @@ metadata.description=UK Legal Deposit Regular Crawl
     </property>
   </bean>
   <bean class="org.archive.crawler.frontier.AMQPUrlReceiver">
-    <property name="amqpUri" value="amqp://guest:guest@amqp.ddb.wa.bl.uk:5672/%2f"/>
+    <property name="amqpUri" value="amqp://guest:guest@amqp:5672/%2f"/>
     <property name="exchange" value="heritrix"/>
     <property name="queueName" value="FC-3-uris-to-crawl"/>
     <property name="durable" value="true"/>
@@ -532,7 +533,7 @@ metadata.description=UK Legal Deposit Regular Crawl
   <bean id="crawlLogFeed" class="uk.bl.wap.crawler.processor.AMQPIndexableCrawlLogFeed">
     <property name="routingKey" value="uris-to-index"/>
     <property name="exchange" value="heritrix"/>
-    <property name="amqpUri" value="amqp://guest:guest@amqp.ddb.wa.bl.uk:5672/%2f"/>
+    <property name="amqpUri" value="amqp://guest:guest@amqp:5672/%2f"/>
     <property name="extraFields">
         <map>
           <entry key="jobName" value="#{metadata.jobName}"/>
@@ -543,7 +544,7 @@ metadata.description=UK Legal Deposit Regular Crawl
   <bean id="crawlLogDocumentFeed" class="uk.bl.wap.crawler.processor.AMQPIndexableCrawlLogFeed">
     <property name="routingKey" value="documents-to-catalogue"/>
     <property name="exchange" value="heritrix"/>
-    <property name="amqpUri" value="amqp://guest:guest@amqp.ddb.wa.bl.uk:5672/%2f"/>
+    <property name="amqpUri" value="amqp://guest:guest@amqp:5672/%2f"/>
     <property name="extraFields">
         <map>
           <entry key="jobName" value="#{metadata.jobName}"/>
@@ -561,7 +562,7 @@ metadata.description=UK Legal Deposit Regular Crawl
                       <property name="alsoCheckVia" value="true"/>
                       <property name="surtsSourceFile" value="watched-surts.txt"/>
                       <property name="surtsDumpFile" value="watched-surts.dump"/>
-                      <property name="sourceCheckInterval" value="300"/>
+                      <property name="sourceCheckInterval" value="30"/>
                     </bean>                    
                     <!-- ...REJECT if NOT PDFs... -->
                     <bean class="org.archive.modules.deciderules.ContentTypeNotMatchesRegexDecideRule">
@@ -662,7 +663,7 @@ metadata.description=UK Legal Deposit Regular Crawl
       </bean>
     </property>
     <!-- rescan the file for changes every 5 minutes (300 seconds) -->
-    <property name="sourceCheckInterval" value="300"/>
+    <property name="sourceCheckInterval" value="30"/>
  </bean>
 <!--
    OVERLAY SHEETS
@@ -1006,7 +1007,7 @@ metadata.description=UK Legal Deposit Regular Crawl
   <bean id="checkpointEventMessageSender" class="uk.bl.wap.util.AMQPCheckpointSuccessMessageProducer">
     <property name="routingKey" value="checkpoints-to-package"/>
     <property name="exchange" value="post-crawl"/>
-    <property name="amqpUri" value="amqp://guest:guest@amqp.ddb.wa.bl.uk:5672/%2f"/>
+    <property name="amqpUri" value="amqp://guest:guest@amqp:5672/%2f"/>
   </bean>
 <!-- 
    OPTIONAL BEANS
