@@ -41,12 +41,19 @@ metadata.description=UK Legal Deposit Regular Crawl
     <property name="jobName" value="[see override above]"/>
     <property name="description" value="[see override above]"/>
 <!-- <property name="robotsPolicyName" value="obey"/> -->
+<!--
+  <property name="robotsPolicyName"> <ref bean="ignoreForTransclusionsRobotsPolicy"/> </property>
+-->
 <!-- <property name="operator" value=""/> -->
 <!-- <property name="operatorFrom" value=""/> -->
     <property name="organization" value="The British Library"/>
 <!-- <property name="audience" value=""/> -->
     <property name="userAgentTemplate" value="bl.uk_lddc_bot/@VERSION@ (+@OPERATOR_CONTACT_URL@)"/>
   </bean>
+  <!-- ROBOTS.TXT ALTERNATIVE APPROACH: Ignore robots.txt for embeds and other transcluded resources.
+  <bean id="ignoreForTransclusionsRobotsPolicy" class="uk.bl.wap.crawler.h3.modules.net.ObeyRobotsExceptTranscludedPolicy">
+  </bean>
+  -->
 <!-- SEEDS ALTERNATE APPROACH: specifying external seeds.txt file in
       the job directory, similar to the H1 approach. 
       Use either the above, or this, but not both. -->
