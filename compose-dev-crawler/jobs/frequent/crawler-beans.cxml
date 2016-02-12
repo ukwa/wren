@@ -409,9 +409,13 @@ metadata.description=UK Legal Deposit Regular Crawl
 <!-- ...suppress likely crawler traps... -->
 <!--ref bean="trapSuppressExtractor" /-->
 <!-- ...extract outlinks via Asynchronous Messaging Queue... -->
+<!-- ...not appropriate for the new crawl dynamics where we render seeds before H3 sees anything...
         <ref bean="extractorMq"/>
+-->
 <!-- ...extract sitemap links from robots.txt... -->
+<!-- ...Actually a bad idea as implemented, as they (and all subsequent content) get scheduled as prerequisites, totally messing with the prioritisation of urls to crawl
         <ref bean="extractorRobotsSitemaps"/>
+-->
 <!-- ...extract outlinks from JSON... -->
         <ref bean="extractorJson"/>
 <!-- ...extract outlinks from HTML content... -->
