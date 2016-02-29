@@ -100,6 +100,14 @@ metadata.description=UK Legal Deposit Regular Crawl
           <property name="decision" value="ACCEPT"/>
           <property name="regex" value="^[L]*[ERP]+$"/>
         </bean>
+        <!-- Always reject navlinks discovered via top-level embeds. -->
+	<!-- This was only needed when the hop-path-length prioritisation only counted navlinks -->
+        <!--
+        <bean class="org.archive.modules.deciderules.HopsPathMatchesRegexDecideRule">
+          <property name="decision" value="REJECT"/>
+          <property name="regex" value="^ER*L+"/>
+        </bean>
+        -->
         <!-- This only makes sense in the broad/domain crawl:
 
         <bean id="externalGeoLookupRule" class="uk.bl.wap.modules.deciderules.ExternalGeoLocationDecideRule">
