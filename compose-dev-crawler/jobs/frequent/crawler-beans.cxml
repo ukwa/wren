@@ -76,7 +76,7 @@ metadata.description=UK Legal Deposit Regular Crawl
 <!-- SCOPE: rules for which discovered URIs to crawl; order is very 
       important because last decision returned other than 'NONE' wins. -->
   <bean id="scope" class="org.archive.modules.deciderules.DecideRuleSequence">
-    <property name="logToFile" value="false"/><!-- This may be incompatible with having the launchId in the logger path because there's no launchID when this gets initialised. Race condition? -->
+    <property name="logToFile" value="true"/><!-- This may be incompatible with having the launchId in the logger path because there's no launchID when this gets initialised. Race condition? -->
     <property name="rules">
       <list>
 <!-- Begin by REJECTing all... -->
@@ -235,7 +235,7 @@ metadata.description=UK Legal Deposit Regular Crawl
     <property name="crawlerCount" value="4"/>
   </bean>
   <bean id="quotaEnforcer" class="org.archive.crawler.prefetch.QuotaEnforcer">
-    <property name="serverMaxSuccessKb" value="524288"/>
+    <property name="serverMaxSuccessKb" value="-1"/>
     <!-- This will log all out-of-quota URLs rather than just retiring the queue. -->
     <!-- property name="forceRetire" value="false"/ -->
   </bean>
@@ -897,6 +897,7 @@ metadata.description=UK Legal Deposit Regular Crawl
         <map>
           <entry key="fetchHttp.maxLengthBytes" value="0"/>
           <entry key="quotaEnforcer.serverMaxSuccessKb" value="-1"/>
+          <entry key="hopsCountReject.enabled" value="false"/>
           <entry key="metadata.robotsPolicyName" value="ignore"/>
         </map>
       </property>
@@ -904,7 +905,8 @@ metadata.description=UK Legal Deposit Regular Crawl
     <bean id="higherLimit" class="org.archive.spring.Sheet">
       <property name="map">
         <map>
-          <entry key="quotaEnforcer.serverMaxSuccessKb" value="2097152"/>
+          <entry key="quotaEnforcer.serverMaxSuccessKb" value="-1"/>
+          <entry key="hopsCountReject.maxHops" value="30"/>
           <entry key="metadata.robotsPolicyName" value="ignore"/>
         </map>
       </property>
@@ -1044,6 +1046,7 @@ metadata.description=UK Legal Deposit Regular Crawl
  -->
  <bean id="uriPrecedencePolicy" 
    class="org.archive.crawler.frontier.precedence.HopsUriPrecedencePolicy">
+   <property name="navlinksOnly" value="false"/>
  </bean>
 <!-- COST ASSIGNMENT POLICY -->
  <bean id="costAssignmentPolicy" 

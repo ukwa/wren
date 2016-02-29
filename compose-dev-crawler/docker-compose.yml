@@ -7,12 +7,12 @@ ukwa-heritrix:
     - ../../bl-heritrix-modules:/bl-heritrix-modules
   ports:
     - "8443:8443"
-#  environment:
-#    - "MONITRIX_ENABLED=1"
+  environment:
+    - "MONITRIX_ENABLED=1"
   links:
     - clamd
     - amqp
-#    - monitrix
+    - monitrix
   volumes_from:
     - dvc:rw
 
@@ -102,6 +102,15 @@ pdf2htmlex:
   build: ../pdf2htmlex
   ports:
     - "5000:5000"
+
+# Monitrix, built on ELK by extending Logstash to support Heritrix logs.
+monitrix:
+  build: ../monitrix
+  ports:
+    - "5601:5601"
+    - "9200:9200"
+    - "5001:5000"
+    - "5044:5044"
 
 # Apache Tika, for text and metadata extraction:
 #tika:

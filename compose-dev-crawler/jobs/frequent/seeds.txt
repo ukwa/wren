@@ -1,0 +1,5 @@
+
+# Heritrix added seed redirect from http://anjackson.net/.
+http://anjackson.net/
+# Heritrix added seed redirect from http://anjackson.net/.
+http://anjackson.net/
