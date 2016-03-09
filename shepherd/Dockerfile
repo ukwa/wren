@@ -3,7 +3,7 @@ FROM centos:7
 RUN \
   yum install -y epel-release && \
   yum install -y git python-pip python-devel libpng-devel libjpeg-devel gcc gcc-c++ make libffi-devel openssl-devel supervisor libxml2 libxml2-devel libxslt libxslt-devel && \
-  pip install requests[security] pika gunicorn supervisor-stdout warctools python-dateutil lxml
+  pip install requests[security] pika gunicorn supervisor-stdout warctools python-dateutil lxml pywebhdfs
 
 ADD python-shepherd /python-shepherd
 

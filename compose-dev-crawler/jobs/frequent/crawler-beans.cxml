@@ -192,6 +192,7 @@ metadata.description=UK Legal Deposit Regular Crawl
       <value>^.+action=buy_now.*$</value>
       <value>^.+?mobile_switch=mobile</value>
       <value>^https?://twitter\.com/.+\?lang=.+$</value>
+      <value>^https?://www\.facebook\.com/sharer\.php\?.+$</value>
     </list>
     </property>
   </bean>
@@ -632,7 +633,7 @@ metadata.description=UK Legal Deposit Regular Crawl
     <property name="bdbModule" ref="bdbFrontierBdb"/>
     <property name="extract404s" value="false"/>
 <!-- <property name="queueTotalBudget" value="-1" /> -->
-<!-- <property name="balanceReplenishAmount" value="3000" /> -->
+    <property name="balanceReplenishAmount" value="10" />
 <!-- <property name="errorPenaltyAmount" value="100" /> -->
 <!-- <property name="precedenceFloor" value="255" /> -->
 <!-- <property name="queuePrecedencePolicy">
@@ -663,8 +664,19 @@ metadata.description=UK Legal Deposit Regular Crawl
   <bean id="uriUniqFilter" class="org.archive.crawler.util.BloomUriUniqFilter">
  </bean>
 -->
+<!--
  <bean id="uriUniqFilter" class="uk.bl.wap.util.EhcacheRecentlySeenUriUniqFilter">
     <property name="cacheStorePath" value="/heritrix/state/#{metadata.jobName}/recentlySeen"/>
+    <property name="textSource">
+      <bean class="org.archive.spring.ConfigFile">
+        <property name="path" value="surt-to-ttl.txt"/>
+      </bean>
+    </property>
+    < !- - rescan the file for changes every 5 minutes (300 seconds) - - >
+    <property name="sourceCheckInterval" value="30"/>
+ </bean>
+-->
+ <bean id="uriUniqFilter" class="uk.bl.wap.util.RedisRecentlySeenUriUniqFilter">
     <property name="textSource">
       <bean class="org.archive.spring.ConfigFile">
         <property name="path" value="surt-to-ttl.txt"/>
