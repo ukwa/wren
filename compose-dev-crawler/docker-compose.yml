@@ -10,6 +10,7 @@ ukwa-heritrix:
   environment:
     - "MONITRIX_ENABLED=1"
   links:
+    - redis
     - clamd
     - amqp
     - monitrix
@@ -103,7 +104,7 @@ pdf2htmlex:
   ports:
     - "5000:5000"
 
-# Monitrix, built on ELK by extending Logstash to support Heritrix logs.
+# Monitrix (II), built on ELK by extending Logstash to support Heritrix logs
 monitrix:
   build: ../monitrix
   ports:
@@ -111,6 +112,24 @@ monitrix:
     - "9200:9200"
     - "5001:5000"
     - "5044:5044"
+
+# A redis instance to act as an alternative "already-seen URI" cache
+redis:
+  image: redis:3.0
+  command: "redis-server --appendonly yes"
+  ports:
+    - "6379:6379"
+#  volumes:
+#    - ./redis/:/data
+
+# A single-node Hadoop and HDFS instance
+hadoop:
+  image: sequenceiq/hadoop-docker:2.7.0
+  command: "/etc/bootstrap.sh -d"
+  ports:
+    - "50070:50070"
+    - "50075:50075"
+  hostname: hadoop
 
 # Apache Tika, for text and metadata extraction:
 #tika:
