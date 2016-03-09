@@ -656,19 +656,8 @@ metadata.description=UK Legal Deposit Regular Crawl
   <bean id="uriUniqFilter" class="org.archive.crawler.util.BloomUriUniqFilter">
  </bean>
 -->
-<!--
  <bean id="uriUniqFilter" class="uk.bl.wap.util.EhcacheRecentlySeenUriUniqFilter">
     <property name="cacheStorePath" value="/heritrix/state/#{metadata.jobName}/recentlySeen"/>
-    <property name="textSource">
-      <bean class="org.archive.spring.ConfigFile">
-        <property name="path" value="surt-to-ttl.txt"/>
-      </bean>
-    </property>
-    < !- - rescan the file for changes every 5 minutes (300 seconds) - - >
-    <property name="sourceCheckInterval" value="30"/>
- </bean>
--->
- <bean id="uriUniqFilter" class="uk.bl.wap.util.RedisRecentlySeenUriUniqFilter">
     <property name="textSource">
       <bean class="org.archive.spring.ConfigFile">
         <property name="path" value="surt-to-ttl.txt"/>
@@ -677,6 +666,17 @@ metadata.description=UK Legal Deposit Regular Crawl
     <!-- rescan the file for changes every 5 minutes (300 seconds) -->
     <property name="sourceCheckInterval" value="30"/>
  </bean>
+<!--
+ <bean id="uriUniqFilter" class="uk.bl.wap.util.RedisRecentlySeenUriUniqFilter">
+    <property name="textSource">
+      <bean class="org.archive.spring.ConfigFile">
+        <property name="path" value="surt-to-ttl.txt"/>
+      </bean>
+    </property>
+    <!- - rescan the file for changes every 5 minutes (300 seconds) - ->
+    <property name="sourceCheckInterval" value="30"/>
+ </bean>
+-->
 <!--
    OVERLAY SHEETS
    Sheets allow some settings to vary by context - usually by URI context,
