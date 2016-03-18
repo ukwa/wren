@@ -391,7 +391,7 @@ metadata.description=UK Legal Deposit Regular Crawl
     <property name="clamdHost" value="clamd"/>
     <property name="clamdPort" value="3310"/>
     <property name="clamdTimeout" value="60000"/>
-    <property name="streamMaxLength" value="94371840"/>
+    <property name="streamMaxLength" value="24000000"/>
   </bean>
   <!-- Configure persistent URI history storage -->
   <bean id="persistStoreProcessor" class="org.archive.modules.recrawl.PersistStoreProcessor">
@@ -621,7 +621,7 @@ metadata.description=UK Legal Deposit Regular Crawl
   </bean>
 <!-- CRAWLCONTROLLER: Control interface, unifying context -->
   <bean id="crawlController" class="org.archive.crawler.framework.CrawlController">
-    <property name="maxToeThreads" value="500"/>
+    <property name="maxToeThreads" value="1000"/>
     <property name="pauseAtStart" value="true" />
     <property name="runWhileEmpty" value="true"/>
 <!-- <property name="recorderInBufferBytes" value="524288" /> -->
@@ -636,8 +636,8 @@ metadata.description=UK Legal Deposit Regular Crawl
     <property name="balanceReplenishAmount" value="10" />
 <!-- <property name="errorPenaltyAmount" value="100" /> -->
 <!-- <property name="precedenceFloor" value="255" /> -->
-    <!-- Use this to ensure the deep crawl of many sites does not prevent the 
-     high-priority content from being crawled (although this is just a mitigation 
+    <!-- Use this to ensure the deep crawl of many sites does not prevent the
+     high-priority content from being crawled (although this is just a mitigation
      for not having enough crawl capacity) -->
     <property name="queuePrecedencePolicy">
         <bean class="org.archive.crawler.frontier.precedence.HighestUriQueuePrecedencePolicy" />
