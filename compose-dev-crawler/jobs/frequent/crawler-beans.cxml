@@ -636,9 +636,12 @@ metadata.description=UK Legal Deposit Regular Crawl
     <property name="balanceReplenishAmount" value="10" />
 <!-- <property name="errorPenaltyAmount" value="100" /> -->
 <!-- <property name="precedenceFloor" value="255" /> -->
-<!-- <property name="queuePrecedencePolicy">
-        <bean class="org.archive.crawler.frontier.precedence.BaseQueuePrecedencePolicy" />
-       </property> -->
+    <!-- Use this to ensure the deep crawl of many sites does not prevent the 
+     high-priority content from being crawled (although this is just a mitigation 
+     for not having enough crawl capacity) -->
+    <property name="queuePrecedencePolicy">
+        <bean class="org.archive.crawler.frontier.precedence.HighestUriQueuePrecedencePolicy" />
+    </property>
 <!-- <property name="snoozeLongMs" value="300000" /> -->
     <property name="retryDelaySeconds" value="30"/>
     <property name="maxRetries" value="15"/>
@@ -664,8 +667,21 @@ metadata.description=UK Legal Deposit Regular Crawl
   <bean id="uriUniqFilter" class="org.archive.crawler.util.BloomUriUniqFilter">
  </bean>
 -->
+<!--
  <bean id="uriUniqFilter" class="uk.bl.wap.util.EhcacheRecentlySeenUriUniqFilter">
     <property name="cacheStorePath" value="/heritrix/state/#{metadata.jobName}/recentlySeen"/>
+    <property name="textSource">
+      <bean class="org.archive.spring.ConfigFile">
+        <property name="path" value="surt-to-ttl.txt"/>
+      </bean>
+    </property>
+    <!- - rescan the file for changes every 5 minutes (300 seconds) - ->
+    <property name="sourceCheckInterval" value="30"/>
+ </bean>
+-->
+ <bean id="uriUniqFilter" class="uk.bl.wap.util.RedisRecentlySeenUriUniqFilter">
+    <property name="redisEndpoint" value="redis://redis:6379"/>
+    <property name="DB" value="0"/>
     <property name="textSource">
       <bean class="org.archive.spring.ConfigFile">
         <property name="path" value="surt-to-ttl.txt"/>
@@ -675,17 +691,6 @@ metadata.description=UK Legal Deposit Regular Crawl
     <property name="sourceCheckInterval" value="30"/>
  </bean>
 <!--
- <bean id="uriUniqFilter" class="uk.bl.wap.util.RedisRecentlySeenUriUniqFilter">
-    <property name="redisEndpoint" value="redis://redis:6379"/>
-    <property name="DB" value="0"/>
-    <property name="textSource">
-      <bean class="org.archive.spring.ConfigFile">
-        <property name="path" value="surt-to-ttl.txt"/>
-      </bean>
-    </property>
-    <!- - rescan the file for changes every 5 minutes (300 seconds) - ->
-    <property name="sourceCheckInterval" value="30"/>
- </bean>
 -->
 <!--
    OVERLAY SHEETS
