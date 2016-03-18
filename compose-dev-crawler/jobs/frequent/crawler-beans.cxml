@@ -392,6 +392,7 @@ metadata.description=UK Legal Deposit Regular Crawl
     <property name="clamdPort" value="3310"/>
     <property name="clamdTimeout" value="60000"/>
     <property name="streamMaxLength" value="24000000"/>
+    <property name="poolSize" value="200"/>
   </bean>
   <!-- Configure persistent URI history storage -->
   <bean id="persistStoreProcessor" class="org.archive.modules.recrawl.PersistStoreProcessor">
@@ -633,7 +634,7 @@ metadata.description=UK Legal Deposit Regular Crawl
     <property name="bdbModule" ref="bdbFrontierBdb"/>
     <property name="extract404s" value="false"/>
 <!-- <property name="queueTotalBudget" value="-1" /> -->
-    <property name="balanceReplenishAmount" value="10" />
+    <property name="balanceReplenishAmount" value="100" />
 <!-- <property name="errorPenaltyAmount" value="100" /> -->
 <!-- <property name="precedenceFloor" value="255" /> -->
     <!-- Use this to ensure the deep crawl of many sites does not prevent the
