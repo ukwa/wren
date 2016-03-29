@@ -57,7 +57,8 @@ metadata.description=UK Legal Deposit Regular Crawl
 <!-- SEEDS ALTERNATE APPROACH: specifying external seeds.txt file in
       the job directory, similar to the H1 approach. 
       Use either the above, or this, but not both. -->
-  <bean id="seeds" class="org.archive.modules.seeds.TextSeedModule">
+  <bean id="seeds" class="uk.bl.wap.crawler.modules.seeds.NoOpSeedsModule">
+    <!--
     <property name="textSource">
       <bean class="org.archive.spring.ConfigFile">
         <property name="path" value="seeds.txt"/>
@@ -65,6 +66,7 @@ metadata.description=UK Legal Deposit Regular Crawl
     </property>
     <property name="sourceTagSeeds" value="true"/>
     <property name="blockAwaitingSeedLines" value="-1"/>
+    -->
   </bean>
 <!-- GEO-LOOKUP: specifying location of external database. -->
 <!--
@@ -392,7 +394,6 @@ metadata.description=UK Legal Deposit Regular Crawl
     <property name="clamdPort" value="3310"/>
     <property name="clamdTimeout" value="60000"/>
     <property name="streamMaxLength" value="24000000"/>
-    <property name="poolSize" value="200"/>
   </bean>
   <!-- Configure persistent URI history storage -->
   <bean id="persistStoreProcessor" class="org.archive.modules.recrawl.PersistStoreProcessor">
