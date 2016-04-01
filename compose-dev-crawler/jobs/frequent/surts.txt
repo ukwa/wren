@@ -1,1 +1,4 @@
-http://anjackson.co.uk/
+http://www.bbc.co.uk/news
+http://www.theguardian.com/uk
+https://www.gov.uk/
+http://www.independent.co.uk/

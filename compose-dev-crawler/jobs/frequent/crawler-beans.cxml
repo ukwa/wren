@@ -57,8 +57,8 @@ metadata.description=UK Legal Deposit Regular Crawl
 <!-- SEEDS ALTERNATE APPROACH: specifying external seeds.txt file in
       the job directory, similar to the H1 approach. 
       Use either the above, or this, but not both. -->
-  <bean id="seeds" class="uk.bl.wap.crawler.modules.seeds.NoOpSeedsModule">
-    <!--
+<!--
+  <bean id="seeds" class="org.archive.modules.seeds.TextSeedModule">
     <property name="textSource">
       <bean class="org.archive.spring.ConfigFile">
         <property name="path" value="seeds.txt"/>
@@ -66,7 +66,9 @@ metadata.description=UK Legal Deposit Regular Crawl
     </property>
     <property name="sourceTagSeeds" value="true"/>
     <property name="blockAwaitingSeedLines" value="-1"/>
-    -->
+  </bean>
+-->
+  <bean id="seeds" class="uk.bl.wap.crawler.modules.seeds.NoOpSeedsModule">
   </bean>
 <!-- GEO-LOOKUP: specifying location of external database. -->
 <!--
@@ -78,7 +80,7 @@ metadata.description=UK Legal Deposit Regular Crawl
 <!-- SCOPE: rules for which discovered URIs to crawl; order is very 
       important because last decision returned other than 'NONE' wins. -->
   <bean id="scope" class="org.archive.modules.deciderules.DecideRuleSequence">
-    <property name="logToFile" value="true"/><!-- This may be incompatible with having the launchId in the logger path because there's no launchID when this gets initialised. Race condition? -->
+    <property name="logToFile" value="false"/><!-- This may be incompatible with having the launchId in the logger path because there's no launchID when this gets initialised. Race condition? -->
     <property name="rules">
       <list>
 <!-- Begin by REJECTing all... -->
@@ -669,7 +671,20 @@ metadata.description=UK Legal Deposit Regular Crawl
   <bean id="uriUniqFilter" class="org.archive.crawler.util.BloomUriUniqFilter">
  </bean>
 -->
-<!--
+<!-- The following alternative implementations rescan a TTL config file for changes every 5 minutes (300 seconds) -->
+
+<!-- The MapDB version - should scale well but may have load/save problems -->
+ <bean id="uriUniqFilter" class="uk.bl.wap.util.MapDBRecentlySeenUriUniqFilter">
+    <property name="cacheStorePath" value="/heritrix/state/#{metadata.jobName}/recentlySeen"/>
+    <property name="textSource">
+      <bean class="org.archive.spring.ConfigFile">
+        <property name="path" value="surt-to-ttl.txt"/>
+      </bean>
+    </property>
+    <property name="sourceCheckInterval" value="30"/>
+ </bean>
+
+<!-- The Ehcache version - works well but seems to suffer a memory leak.
  <bean id="uriUniqFilter" class="uk.bl.wap.util.EhcacheRecentlySeenUriUniqFilter">
     <property name="cacheStorePath" value="/heritrix/state/#{metadata.jobName}/recentlySeen"/>
     <property name="textSource">
@@ -677,10 +692,11 @@ metadata.description=UK Legal Deposit Regular Crawl
         <property name="path" value="surt-to-ttl.txt"/>
       </bean>
     </property>
-    <!- - rescan the file for changes every 5 minutes (300 seconds) - ->
     <property name="sourceCheckInterval" value="30"/>
  </bean>
 -->
+
+<!-- The Redis version - not heavily tested, and limited by RAM on the Redis server/cluster
  <bean id="uriUniqFilter" class="uk.bl.wap.util.RedisRecentlySeenUriUniqFilter">
     <property name="redisEndpoint" value="redis://redis:6379"/>
     <property name="DB" value="0"/>
@@ -689,10 +705,8 @@ metadata.description=UK Legal Deposit Regular Crawl
         <property name="path" value="surt-to-ttl.txt"/>
       </bean>
     </property>
-    <!-- rescan the file for changes every 5 minutes (300 seconds) -->
     <property name="sourceCheckInterval" value="30"/>
  </bean>
-<!--
 -->
 <!--
    OVERLAY SHEETS
@@ -1174,22 +1188,27 @@ metadata.description=UK Legal Deposit Regular Crawl
   <bean id="bdbFrontierBdb" class="org.archive.bdb.BdbModule">
     <property name="dir" value="/heritrix/state/#{metadata.jobName}/frontier"/>
     <property name="cachePercent" value="30"/>
+    <property name="expectedConcurrency" value="1000"/>
   </bean>
   <bean id="bdbPersistBdb" class="org.archive.bdb.BdbModule">
     <property name="dir" value="/heritrix/state/#{metadata.jobName}/persist"/>
     <property name="cachePercent" value="30"/>
+    <property name="expectedConcurrency" value="1000"/>
   </bean>
   <bean id="bdbStatisticsBdb" class="org.archive.bdb.BdbModule">
     <property name="dir" value="/heritrix/state/#{metadata.jobName}/statistics"/>
     <property name="cachePercent" value="30"/>
+    <property name="expectedConcurrency" value="1000"/>
   </bean>
   <bean id="bdbCookieStoreBdb" class="org.archive.bdb.BdbModule">
     <property name="dir" value="/heritrix/state/#{metadata.jobName}/cookies"/>
     <property name="cachePercent" value="30"/>
+    <property name="expectedConcurrency" value="1000"/>
   </bean>
   <bean id="bdbServerCacheBdb" class="org.archive.bdb.BdbModule">
     <property name="dir" value="/heritrix/state/#{metadata.jobName}/serverCache"/>
     <property name="cachePercent" value="30"/>
+    <property name="expectedConcurrency" value="1000"/>
   </bean>
 <!-- BDBCOOKIESTORAGE: disk-based cookie storage for FetchHTTP -->
   <bean id="cookieStorage" class="org.archive.modules.fetcher.BdbCookieStore">
