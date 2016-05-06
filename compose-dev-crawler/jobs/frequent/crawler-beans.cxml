@@ -667,13 +667,15 @@ metadata.description=UK Legal Deposit Regular Crawl
 <!-- <property name="dumpPendingAtClose" value="false" /> -->
   </bean>
 <!-- URI UNIQ FILTER: Used by frontier to remember already-included URIs -->
-<!--
+<!-- A Bloom Filter implementation (H3 standard module) - no persistance TBC, false positives will skip URLs
   <bean id="uriUniqFilter" class="org.archive.crawler.util.BloomUriUniqFilter">
  </bean>
 -->
-<!-- The following alternative implementations rescan a TTL config file for changes every 5 minutes (300 seconds) -->
 
-<!-- The MapDB version - should scale well but may have load/save problems -->
+<!-- The following alternative implementations are 'forgetful' caches that rescan a TTL config. 
+  file for changes every 5 minutes (300 seconds) -->
+
+<!-- The MapDB version -->
  <bean id="uriUniqFilter" class="uk.bl.wap.util.MapDBRecentlySeenUriUniqFilter">
     <property name="cacheStorePath" value="/heritrix/state/#{metadata.jobName}/recentlySeen"/>
     <property name="textSource">
@@ -684,7 +686,7 @@ metadata.description=UK Legal Deposit Regular Crawl
     <property name="sourceCheckInterval" value="30"/>
  </bean>
 
-<!-- The Ehcache version - works well but seems to suffer a memory leak.
+<!-- The Ehcache version
  <bean id="uriUniqFilter" class="uk.bl.wap.util.EhcacheRecentlySeenUriUniqFilter">
     <property name="cacheStorePath" value="/heritrix/state/#{metadata.jobName}/recentlySeen"/>
     <property name="textSource">
