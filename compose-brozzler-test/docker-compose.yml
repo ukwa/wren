@@ -1,0 +1,22 @@
+# WARC Proxy
+warcprox:
+  build: ../warcprox
+  volumes:
+    - ./output/warcs:/output/warcs
+
+# RethinkDB
+rethinkdb:
+  image: rethinkdb:2.3
+  ports:
+    - "8080:8080"
+
+# Brozzler Worker
+brozzler-worker:
+  build: ../brozzler
+  command: "xvfb-run brozzler-worker --rethinkdb-servers rethinkdb"
+  cap_add:
+    - SYS_ADMIN
+  links:
+    - "rethinkdb"
+    - "warcprox"
+ 
