@@ -52,3 +52,6 @@
 [submodule "openwayback"]
 	path = openwayback
 	url = https://github.com/ukwa/docker-openwayback.git
+[submodule "brozzler"]
+	path = brozzler
+	url = https://github.com/ukwa/docker-brozzler.git
