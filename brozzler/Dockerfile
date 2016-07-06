@@ -19,12 +19,15 @@ RUN apt-get install -y software-properties-common x11vnc xvfb && \
 
 # Install brozzler itself:
 RUN export LC_ALL=C.UTF-8 && \
-    pip3.4 install brozzler
-#pip3.4 install git+https://github.com/internetarchive/brozzler.git[webconsole]
+    pip3.4 install 'git+https://github.com/internetarchive/brozzler.git#[webconsole]'
+#    pip3.4 install brozzler
 
+RUN apt-get install -y dbus
+
+ADD xvfb-run-chromium-browser.sh /usr/bin
 #
 EXPOSE 8000
 
 #
-CMD brozzler-worker -e chromium
+CMD brozzler-worker
 

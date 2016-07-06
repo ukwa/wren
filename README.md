@@ -50,6 +50,13 @@ FC-4-uris-to-index
 
 FI-1-checkpoints-to-package
 
+warcprox
+--------
+
+warcprox_meta["warc-prefix"] from request header in JSON:
+
+Warcprox-Meta: { "warc-prefix": "PREFIX"}
+
 Wren Storm Topologies
 ---------------------
 
