@@ -55,3 +55,6 @@
 [submodule "brozzler"]
 	path = brozzler
 	url = https://github.com/ukwa/docker-brozzler.git
+[submodule "ukwa-heritrix-lbs"]
+	path = ukwa-heritrix-lbs
+	url = git@github.com:ukwa/docker-heritrix.git
