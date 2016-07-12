@@ -11,7 +11,6 @@ ukwa-heritrix-lbs:
     - clamd
     - amqp
     - crawl_state_solr
-    - hadoop
   volumes_from:
     - dvc:rw
 
@@ -65,6 +64,8 @@ shepherd:
     - amqp
     - cdxserver
     - webrender
+    - hadoop
+    - crawl_state_solr
   volumes_from:
     - dvc:rw
 
