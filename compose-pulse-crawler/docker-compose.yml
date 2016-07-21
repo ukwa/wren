@@ -118,6 +118,17 @@ crawl_state_solr:
   ports:
     - "8983:8983"
 
+crawl-state-browser:
+  build: ../crawl-state-browser
+  command: bundle exec rails s -p 3000 -b '0.0.0.0'
+  environment:
+    - SOLR_URL='http://crawl_state_solr:8983/solr/crawl_state'
+  ports:
+    - "3000:3000"
+  links:
+    - crawl_state_solr
+
+
 # Apache Tika, for text and metadata extraction:
 #tika:
 #  image: logicalspark/docker-tikaserver
