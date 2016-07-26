@@ -37,7 +37,7 @@ class CatalogController < ApplicationController
     #}
 
     # solr field configuration for search results/index views
-    config.index.title_field = 'id'
+    config.index.title_field = 'job_launch_id_s'
     config.index.display_type_field = 'crawl_stream_s'
 
     # solr field configuration for document/show views
@@ -99,9 +99,10 @@ class CatalogController < ApplicationController
 
     # solr fields to be displayed in the index (search results) view
     #   The ordering of the field names is the order of the display
-    config.add_index_field 'id', label: 'Crawl Job ID'
+    config.add_index_field 'job_launch_id_s', label: 'Crawl Job Launch ID'
     config.add_index_field 'status_s', label: 'Crawl Job Status'
     config.add_index_field 'crawl_stream_s', label: 'Crawl Stream'
+    config.add_index_field 'at_tdt', label: 'Date'
     config.add_index_field 'launched_at_tdt', label: 'Launched At'
     config.add_index_field 'states_ss', label: 'Crawl State History'
     # config.add_index_field 'title_display', label: 'Title'
@@ -194,8 +195,8 @@ class CatalogController < ApplicationController
     # label in pulldown is followed by the name of the SOLR field to sort by and
     # whether the sort is ascending or descending (it must be asc or desc
     # except in the relevancy case).
+    config.add_sort_field 'at_tdt desc', label: 'date'
     config.add_sort_field 'launched_at_tdt desc', label: 'launch date'
-    config.add_sort_field 'last_updated_tdt desc', label: 'updated date'
     # config.add_sort_field 'score desc, pub_date_sort desc, title_sort asc', label: 'relevance'
     # config.add_sort_field 'pub_date_sort desc, title_sort asc', label: 'year'
     # config.add_sort_field 'author_sort asc, title_sort asc', label: 'author'
