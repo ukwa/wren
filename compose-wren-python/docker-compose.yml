@@ -1,0 +1,31 @@
+# RethinkDB
+rethinkdb:
+  image: rethinkdb:2.3
+  ports:
+    - "8088:8080"
+
+# WARC Proxy
+warcprox:
+  build: ../warcprox
+  command: "/bin/sh -c 'sleep 10; warcprox --rethinkdb-servers rethinkdb -b 0.0.0.0 -d /output/wren --base32 -z --rollover-idle-time 3600'"
+  volumes:
+    - ./output/wren:/output/wren
+  ports:
+    - "8000:8000"
+  links:
+    - rethinkdb
+
+# PhantomJS web page rendering service
+# TODO pick up proxy from the environment
+webrender:
+  build: ../webrender-phantomjs
+  environment:
+    - "HTTP_PROXY=http://warcprox:8000/"
+  ports:
+    - "9000:8000"
+  links:
+    - warcprox
+
+
+
+
