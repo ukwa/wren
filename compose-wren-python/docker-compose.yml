@@ -1,19 +1,26 @@
-# RethinkDB
-rethinkdb:
-  image: rethinkdb:2.3
-  ports:
-    - "8088:8080"
+## RethinkDB
+#rethinkdb:
+#  image: rethinkdb:2.3
+#  ports:
+#    - "8088:8080"
+#  volumes:
+#    - ./rethinkdb:/data
+#  cap_add:
+#    - SYS_PTRACE
 
 # WARC Proxy
 warcprox:
   build: ../warcprox
-  command: "/bin/sh -c 'sleep 10; warcprox --rethinkdb-servers rethinkdb -b 0.0.0.0 -d /output/wren --base32 -z --rollover-idle-time 3600'"
+#  command: "/bin/sh -c 'sleep 30; warcprox --rethinkdb-servers rethinkdb -b 0.0.0.0 -p 8000 -d /output/wren --base32 -z --rollover-idle-time 3600'"
+  command: "warcprox -b 0.0.0.0 -p 8000 -d /output/warcs --base32 -z --rollover-idle-time 3600"
   volumes:
-    - ./output/wren:/output/wren
+    - ./output/wren:/output/warcs
   ports:
     - "8000:8000"
-  links:
-    - rethinkdb
+#  links:
+#    - rethinkdb
+  ulimits:
+    nproc: 65535 # We need to set this, because the default is '-1' which warcprox uses and then *no threads* are created! See https://github.com/internetarchive/warcprox/blob/2.x/warcprox/warcproxy.py#L413
 
 # PhantomJS web page rendering service
 # TODO pick up proxy from the environment
