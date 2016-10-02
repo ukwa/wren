@@ -1,0 +1,36 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>uk.bl.wa.heritrix</groupId>
+  <artifactId>elastrix</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <build>
+    <sourceDirectory>src</sourceDirectory>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.3</version>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <dependencies>
+     <dependency>
+        <groupId>io.atomix</groupId>
+        <artifactId>atomix-all</artifactId>
+        <version>1.0.0-rc9</version>
+     </dependency>
+     <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>19.0</version>
+     </dependency>
+     <dependency>
+        <groupId>io.teknek</groupId>
+        <artifactId>gossip</artifactId>
+        <version>0.0.3</version>
+     </dependency>
+  </dependencies>
+</project>
