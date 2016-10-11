@@ -33,6 +33,11 @@ webrender:
   links:
     - warcprox
 
-
-
-
+## HBase
+#hbase:
+#  image: dajobe/hbase
+#  hostname: hbase-docker
+#  ports:
+#    - "16010:16010"
+#    - "9095:9095"
+#    - "8085:8085"

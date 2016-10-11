@@ -125,11 +125,29 @@ redis:
 # A single-node Hadoop and HDFS instance
 hadoop:
   image: sequenceiq/hadoop-docker:2.7.0
+  hostname: hadoop
   command: "/etc/bootstrap.sh -d"
   ports:
+    - "50010:50010"
+    - "50020:50020"
     - "50070:50070"
     - "50075:50075"
-  hostname: hadoop
+    - "50090:50090"
+    - "8020:8020"
+    - "9000:9000"
+    # Mapred ports
+    - "19888:19888"
+    # Yarn ports
+    - "8030:8030"
+    - "8031:8031"
+    - "8032:8032"
+    - "8033:8033"
+    - "8040:8040"
+    - "8042:8042"
+    - "8088:8088"
+    # Other ports
+    - "49707:49707"
+    - "2122:2122"
 
 # Apache Tika, for text and metadata extraction:
 #tika:

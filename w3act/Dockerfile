@@ -15,4 +15,4 @@ VOLUME /w3act
 
 EXPOSE 9000
 
-CMD /w3act/bin/w3act
+CMD /w3act/bin/w3act -Dconfig.file=/w3act/conf/dev.conf

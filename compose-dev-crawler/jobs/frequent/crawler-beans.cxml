@@ -1190,27 +1190,27 @@ metadata.description=UK Legal Deposit Regular Crawl
   <bean id="bdbFrontierBdb" class="org.archive.bdb.BdbModule">
     <property name="dir" value="/heritrix/state/#{metadata.jobName}/frontier"/>
     <property name="cachePercent" value="30"/>
-    <property name="expectedConcurrency" value="1000"/>
+    <property name="expectedConcurrency" value="100"/>
   </bean>
   <bean id="bdbPersistBdb" class="org.archive.bdb.BdbModule">
     <property name="dir" value="/heritrix/state/#{metadata.jobName}/persist"/>
     <property name="cachePercent" value="30"/>
-    <property name="expectedConcurrency" value="1000"/>
+    <property name="expectedConcurrency" value="100"/>
   </bean>
   <bean id="bdbStatisticsBdb" class="org.archive.bdb.BdbModule">
     <property name="dir" value="/heritrix/state/#{metadata.jobName}/statistics"/>
     <property name="cachePercent" value="30"/>
-    <property name="expectedConcurrency" value="1000"/>
+    <property name="expectedConcurrency" value="100"/>
   </bean>
   <bean id="bdbCookieStoreBdb" class="org.archive.bdb.BdbModule">
     <property name="dir" value="/heritrix/state/#{metadata.jobName}/cookies"/>
     <property name="cachePercent" value="30"/>
-    <property name="expectedConcurrency" value="1000"/>
+    <property name="expectedConcurrency" value="100"/>
   </bean>
   <bean id="bdbServerCacheBdb" class="org.archive.bdb.BdbModule">
     <property name="dir" value="/heritrix/state/#{metadata.jobName}/serverCache"/>
     <property name="cachePercent" value="30"/>
-    <property name="expectedConcurrency" value="1000"/>
+    <property name="expectedConcurrency" value="100"/>
   </bean>
 <!-- BDBCOOKIESTORAGE: disk-based cookie storage for FetchHTTP -->
   <bean id="cookieStorage" class="org.archive.modules.fetcher.BdbCookieStore">

@@ -6,7 +6,7 @@ rethinkdb:
 
 # WARC Proxy
 warcprox:
-  build: ../warcprox
+  image: ukwa/warcprox
   command: "warcprox --rethinkdb-servers rethinkdb -b 0.0.0.0 -d /output/warcs --base32 -z --rollover-idle-time 3600"
   volumes:
     - ./output/warcs:/output/warcs
@@ -15,7 +15,7 @@ warcprox:
 
 # Brozzler Worker
 worker:
-  build: ../brozzler
+  image: ukwa/brozzler
   command: brozzler-worker --rethinkdb-servers rethinkdb -e 'xvfb-run-chromium-browser.sh'
   cap_add:
     - SYS_ADMIN

@@ -66,6 +66,7 @@ shepherd:
     - webrender
     - hadoop
     - crawl_state_solr
+    - w3act
   volumes_from:
     - dvc:rw
 
@@ -74,6 +75,8 @@ cdxserver:
   build: ../tinycdxserver
   ports:
     - "9090:8080"
+# Alternative command to enable verbose logging
+#  command: "/usr/lib/jvm/java-8-oracle/bin/java -jar tinycdxserver/tinycdxserver.jar -v -d /cdx-data -p 8080"
 # I don't think this works on dev systems - should be fine in live.
 #  volumes:
 #    - ./cdx:/data
@@ -100,8 +103,8 @@ openwayback:
 pdf2htmlex:
 #  image: ukwa/pdf2htmlex
   build: ../pdf2htmlex
-  ports:
-    - "5000:5000"
+#  ports:
+#    - "5000:5000"
 
 # A single-node Hadoop and HDFS instance
 hadoop:
@@ -118,6 +121,7 @@ crawl_state_solr:
   ports:
     - "8983:8983"
 
+# A Blacklight-based browser for looking at the crawl state events:
 crawl-state-browser:
   build: ../crawl-state-browser
   command: bundle exec rails s -p 3000 -b '0.0.0.0'
@@ -128,23 +132,42 @@ crawl-state-browser:
   links:
     - crawl_state_solr
 
+# W3ACT (build in place and run)
+w3act:
+  build: ../w3act
+  volumes:
+    - ../w3act/w3act/target/universal/stage:/w3act
+  ports:
+    - "9000:9000"
+  links:
+    - openwayback
+#    - postgres
+
+# Test sites
+
+# Local version of the Archival Acid Test: http://acid.matkelly.com
+acid.matkelly.com:
+  build: ../acid-crawl/archival-acid-test
+  ports:
+    - "180:80"
+
+# Local version of the UKWA test site: http://data.webarchive.org.uk/crawl-test-site/
+crawl-test-site:
+  image: jekyll/jekyll
+  volumes:
+    - ../acid-crawl/crawl-test-site:/srv/jekyll
+  ports:
+    - "280:4000"
+
+# For W3ACT data, not used at present (using H2 instead)
+#postgres:
+#  image: postgres:9.4
+#  environment:
+#    - "POSTGRES_PASSWORD=pgpwd"
+
 
 # Apache Tika, for text and metadata extraction:
 #tika:
 #  image: logicalspark/docker-tikaserver
 #  ports: 
 #    - "9998:9998"
-
-## W3ACT (build in place and run)
-#w3act:
-#  build: ../w3act
-#  volumes:
-#    - ../w3act/w3act/target/universal/stage:/w3act
-#  ports:
-#    - "9000:9000"#
-
-## For W3ACT data
-#postgres:
-#  image: postgres:9.4
-#  environment:
-#    - "POSTGRES_PASSWORD=pgpwd"#
