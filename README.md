@@ -1,7 +1,9 @@
 Wren
 ====
 
-An experiment aimed at building a scaleable, modular web archive system based on [Docker Compose](https://docs.docker.com/compose/) and eventually, [Apache Storm](http://storm.apache.org/).
+An experiment aimed at building a scaleable, modular web archive system based on [Docker Compose](https://docs.docker.com/compose/) and possibly, [Apache Storm](http://storm.apache.org/).
+
+The production version of this approach is held in the [Pulse](https://github.com/ukwa/pulse) project.
 
 To make any progress, we need to be able to effectively compare any new crawler with our current system. Therefore, we start by reproducing our existing crawl system via Docker Compose, and check we fully understand it before attempting to make any modifications. We will then look at ways of modifying, replacing or removing our current components in order to make the whole system more maintainable, manageable and scalable.
 
