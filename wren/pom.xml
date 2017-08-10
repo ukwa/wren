@@ -12,7 +12,7 @@
    <properties>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-      <storm.version>0.10.0</storm.version>
+      <storm-core.version>1.1.0</storm-core.version>
    </properties>
 
    <dependencies>
@@ -25,18 +25,18 @@
       <dependency>
          <groupId>org.apache.storm</groupId>
          <artifactId>storm-core</artifactId>
-         <version>${storm.version}</version>
+         <version>${storm-core.version}</version>
          <scope>provided</scope>
       </dependency>
       <dependency>
          <groupId>org.apache.storm</groupId>
          <artifactId>flux-core</artifactId>
-         <version>${storm.version}</version>
+         <version>${storm-core.version}</version>
       </dependency>
       <dependency>
          <groupId>org.apache.storm</groupId>
          <artifactId>flux-wrappers</artifactId>
-         <version>${storm.version}</version>
+         <version>${storm-core.version}</version>
          <exclusions>
             <exclusion>
                <artifactId>commons-cli</artifactId>
@@ -45,19 +45,19 @@
          </exclusions>
       </dependency>
       <dependency>
-         <groupId>com.digitalpebble</groupId>
+         <groupId>com.digitalpebble.stormcrawler</groupId>
          <artifactId>storm-crawler-core</artifactId>
-         <version>0.7</version>
+         <version>1.5.1</version>
       </dependency>
       <dependency>
          <groupId>io.latent</groupId>
          <artifactId>storm-rabbitmq</artifactId>
-         <version>0.6.1</version>
+         <version>1.0.0</version>
       </dependency>
       <dependency>
          <groupId>org.jwat</groupId>
          <artifactId>jwat-warc</artifactId>
-         <version>1.0.3</version>
+         <version>1.1.0</version>
       </dependency>
       <dependency>
          <groupId>org.mockito</groupId>

@@ -5,9 +5,10 @@ package uk.bl.wa.wren.queues;
 
 import java.io.UnsupportedEncodingException;
 
+import org.apache.storm.tuple.Tuple;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import backtype.storm.tuple.Tuple;
 import io.latent.storm.rabbitmq.TupleToMessage;
 import uk.bl.wa.wren.model.CrawlURL;
 

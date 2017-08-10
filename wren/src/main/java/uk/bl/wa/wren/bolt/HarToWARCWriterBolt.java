@@ -11,6 +11,11 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 import java.util.UUID;
 
+import org.apache.storm.task.OutputCollector;
+import org.apache.storm.task.TopologyContext;
+import org.apache.storm.topology.IRichBolt;
+import org.apache.storm.topology.OutputFieldsDeclarer;
+import org.apache.storm.tuple.Tuple;
 import org.jwat.common.Base32;
 import org.jwat.common.Base64;
 import org.jwat.common.ContentType;
@@ -29,11 +34,6 @@ import org.slf4j.LoggerFactory;
 
 import com.ibm.icu.util.Calendar;
 
-import backtype.storm.task.OutputCollector;
-import backtype.storm.task.TopologyContext;
-import backtype.storm.topology.IRichBolt;
-import backtype.storm.topology.OutputFieldsDeclarer;
-import backtype.storm.tuple.Tuple;
 import uk.bl.wa.wren.model.CrawlURL;
 
 /**
