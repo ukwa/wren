@@ -7,11 +7,10 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.storm.Config;
-import org.apache.storm.Constants;
 import org.apache.storm.task.OutputCollector;
 import org.apache.storm.task.TopologyContext;
 import org.apache.storm.topology.OutputFieldsDeclarer;
-import org.apache.storm.topology.base.BaseRichBolt;
+import org.apache.storm.topology.base.BaseTickTupleAwareRichBolt;
 import org.apache.storm.tuple.Tuple;
 import org.apache.storm.tuple.Values;
 
@@ -21,7 +20,7 @@ import com.digitalpebble.stormcrawler.Metadata;
  * @author Andrew Jackson <Andrew.Jackson@bl.uk>
  *
  */
-public class StreamPrioritiserBolt extends BaseRichBolt {
+public class StreamPrioritiserBolt extends BaseTickTupleAwareRichBolt {
 
     private static final long serialVersionUID = -9214076246349301273L;
 
@@ -46,18 +45,9 @@ public class StreamPrioritiserBolt extends BaseRichBolt {
         return conf;
     }
 
-    /* (non-Javadoc)
-     * @see backtype.storm.task.IBolt#execute(backtype.storm.tuple.Tuple)
-     */
     @Override
-    public void execute(Tuple input) {
-
+    protected void process(Tuple input) {
         try {
-            if (isTickTuple(input)) {
-                // _cache.rotate();
-                return;
-            }
-
             // do your bolt stuff
             //
             //
@@ -88,7 +78,19 @@ public class StreamPrioritiserBolt extends BaseRichBolt {
             _collector.reportError(e);
         }
 
+    }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.storm.topology.base.BaseTickTupleAwareRichBolt#onTickTuple(org
+     * .apache.storm.tuple.Tuple)
+     */
+    @Override
+    protected void onTickTuple(Tuple tuple) {
+        super.onTickTuple(tuple);
+        // _cache.rotate();
     }
 
     /* (non-Javadoc)
@@ -100,7 +102,4 @@ public class StreamPrioritiserBolt extends BaseRichBolt {
 
     }
 
-    protected static boolean isTickTuple(Tuple tuple) {
-        return tuple.getSourceComponent().equals(Constants.SYSTEM_COMPONENT_ID) && tuple.getSourceStreamId().equals(Constants.SYSTEM_TICK_STREAM_ID);
-    }
 }

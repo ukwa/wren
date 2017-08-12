@@ -1,7 +1,7 @@
 /**
  * 
  */
-package uk.bl.wa.teacup.bolt;
+package uk.bl.wa.wren.bolt;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;

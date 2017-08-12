@@ -1,7 +1,7 @@
 /**
  * 
  */
-package uk.bl.wa.teacup.bolt;
+package uk.bl.wa.wren.bolt;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

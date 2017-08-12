@@ -2,6 +2,7 @@
    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
    <modelVersion>4.0.0</modelVersion>
 
+   <artifactId>wren</artifactId>
    <groupId>uk.bl.wa.wren</groupId>
    <version>0.0.1-SNAPSHOT</version>
    <packaging>jar</packaging>
@@ -58,6 +59,11 @@
          <groupId>org.jwat</groupId>
          <artifactId>jwat-warc</artifactId>
          <version>1.1.0</version>
+      </dependency>
+      <dependency>
+         <groupId>org.archive.heritrix</groupId>
+         <artifactId>heritrix-modules</artifactId>
+         <version>3.3.0-LBS-2016-02</version>
       </dependency>
       <dependency>
          <groupId>org.mockito</groupId>
@@ -174,5 +180,16 @@
          </plugin>
       </plugins>
    </build>
-   <artifactId>wren</artifactId>
+   <repositories>
+      <repository>
+         <id>sbforge-nexus</id>
+         <url>https://sbforge.org/nexus/content/groups/public</url>
+         <releases>
+            <enabled>true</enabled>
+         </releases>
+         <snapshots>
+            <enabled>true</enabled>
+         </snapshots>
+      </repository>
+   </repositories>
 </project>
